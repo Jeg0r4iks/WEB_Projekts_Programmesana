@@ -1,6 +1,7 @@
 <?php
 use App\Http\Controllers\InfoController;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\RegisterController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -53,3 +54,6 @@ Route::get('/info', [InfoController::class, 'getInfo']);
 Route::get('/api/posts', [PostController::class, 'index']);
 
 Route::post('/api/posts', [PostController::class, 'store']);
+
+//Route::get('/register', [RegisterController::class, 'create'])->name('register');
+Route::post('/register', [RegisterController::class, 'register']);

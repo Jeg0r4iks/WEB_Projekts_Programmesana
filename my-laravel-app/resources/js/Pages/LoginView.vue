@@ -24,6 +24,7 @@
 
 <script setup>
 import { ref } from 'vue';
+import axios from 'axios';
 
 const isLogin = ref(true);
 const email = ref('');
@@ -34,12 +35,29 @@ const toggleMode = () => {
     isLogin.value = !isLogin.value;
 };
 
-const handleSubmit = () => {
+const handleSubmit = async () => {
     if (!isLogin.value && password.value !== confirmPassword.value) {
-        alert('Password is incorrect');
+        alert('Passwords do not match');
         return;
     }
-    alert(`${isLogin.value ? 'Enter' : 'Registration'} выполнена!`);
+
+    const formData = {
+        email: email.value,
+        password: password.value,
+        password_confirmation: confirmPassword.value, // если регистрация
+    };
+
+    try {
+        const response = await axios.post('/login', formData);
+        console.log('User registered', response.data);
+        // Можешь добавить редирект или успех
+    } catch (error) {
+        if (error.response && error.response.data) {
+            console.error('Error:', error.response.data); // Ошибка валидации
+        } else {
+            console.error('Error registering user:', error);
+        }
+    }
 };
 </script>
 
