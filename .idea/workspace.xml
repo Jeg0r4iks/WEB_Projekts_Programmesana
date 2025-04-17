@@ -5,8 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d52ee4fa-bf82-4f27-a061-9d7b8f5e195d" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/my-laravel-app/app/Http/Controllers/RegisterController.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/my-laravel-app/app/Http/Controllers/LoginController.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/my-laravel-app/resources/js/Pages/ProfileView.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/my-laravel-app/app/Http/Controllers/RegisterController.php" beforeDir="false" afterPath="$PROJECT_DIR$/my-laravel-app/app/Http/Controllers/RegisterController.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/my-laravel-app/app/Models/User.php" beforeDir="false" afterPath="$PROJECT_DIR$/my-laravel-app/app/Models/User.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/my-laravel-app/resources/js/Pages/LoginView.vue" beforeDir="false" afterPath="$PROJECT_DIR$/my-laravel-app/resources/js/Pages/LoginView.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/my-laravel-app/routes/web.php" beforeDir="false" afterPath="$PROJECT_DIR$/my-laravel-app/routes/web.php" afterDir="false" />
@@ -182,6 +184,11 @@
       <workItem from="1743878378831" duration="3697000" />
       <workItem from="1743934891678" duration="2110000" />
       <workItem from="1743964489814" duration="625000" />
+      <workItem from="1744058522050" duration="661000" />
+      <workItem from="1744127176328" duration="2997000" />
+      <workItem from="1744571848111" duration="248000" />
+      <workItem from="1744654699471" duration="3880000" />
+      <workItem from="1744728744290" duration="17660000" />
     </task>
     <servers />
   </component>

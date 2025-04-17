@@ -2,6 +2,7 @@
 use App\Http\Controllers\InfoController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\RegisterController;
+use App\Http\Controllers\LoginController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -49,6 +50,10 @@ Route::get('/login', function () {
     return Inertia::render('LoginView');
 })->name('login');
 
+Route::get('/profile', function () {
+    return Inertia::render('ProfileView');
+});
+
 Route::get('/info', [InfoController::class, 'getInfo']);
 
 Route::get('/api/posts', [PostController::class, 'index']);
@@ -57,3 +62,5 @@ Route::post('/api/posts', [PostController::class, 'store']);
 
 //Route::get('/register', [RegisterController::class, 'create'])->name('register');
 Route::post('/register', [RegisterController::class, 'register']);
+Route::post('/login', [LoginController::class, 'login']);
+

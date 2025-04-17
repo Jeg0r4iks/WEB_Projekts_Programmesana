@@ -15,6 +15,7 @@ class User extends Authenticatable
      * Поля, разрешённые для массового заполнения.
      */
     protected $fillable = [
+        'username',
         'email',
         'password',
     ];

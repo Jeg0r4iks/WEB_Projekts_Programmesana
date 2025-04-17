@@ -12,12 +12,13 @@ class RegisterController extends Controller
     {
         // Просто создаем пользователя без валидации
         $user = User::create([
+            'username' => $request->username,
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
 
         return response()->json([
-            'message' => 'Регистрация прошла успешно',
+            'message' => 'Registration Successful',
             'user' => $user,
         ], 201);
     }
