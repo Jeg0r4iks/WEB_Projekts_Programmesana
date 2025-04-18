@@ -1,71 +1,73 @@
 <template>
     <div class="profile">
         <h1>Profile</h1>
+
         <div class="profile-info">
             <div class="info-item">
                 <label>Username:</label>
-                <span>{{ user.username }}</span>
+                <span v-if="!isEditing">{{ form.username }}</span>
+                <input
+                    v-else
+                    v-model="form.username"
+                    type="text"
+                    class="input-group"
+                />
             </div>
+
             <div class="info-item">
                 <label>Email:</label>
-                <span>{{ user.email }}</span>
+                <span v-if="!isEditing">{{ form.email }}</span>
+                <input
+                    v-else
+                    v-model="form.email"
+                    type="email"
+                    class="input-group"
+                />
             </div>
         </div>
-        <button @click="editProfile">Edit Profile</button>
 
-        <transition name="fade">
-            <div v-if="isEditing" class="edit-form">
-                <h2>Edit Profile</h2>
-                <div class="input-group">
-                    <label for="username">Username</label>
-                    <input v-model="user.username" type="text" id="username" />
-                </div>
-                <div class="input-group">
-                    <label for="email">Email</label>
-                    <input v-model="user.email" type="email" id="email" />
-                </div>
-                <button @click="saveProfile">Save</button>
-                <button @click="cancelEdit">Cancel</button>
-            </div>
-        </transition>
+        <div v-if="!isEditing">
+            <button @click="editProfile">Edit Profile</button>
+        </div>
+
+        <div v-else>
+            <button @click="saveProfile" :disabled="form.processing">Save</button>
+            <button @click="cancelEdit">Cancel</button>
+        </div>
     </div>
 </template>
 
 <script setup>
 import { ref } from 'vue';
+import { useForm } from '@inertiajs/vue3';
 
-// Заготовленные данные пользователя (можно заменить на реальные данные, полученные с сервера)
-const user = ref({
-    username: '',
-    email: ''
+const props = defineProps({
+    user: Object
 });
 
-// Флаг режима редактирования профиля
 const isEditing = ref(false);
 
-// Открыть форму редактирования
+const form = useForm({
+    username: props.user.username,
+    email: props.user.email
+});
+
 const editProfile = () => {
     isEditing.value = true;
 };
 
-// Отмена редактирования
 const cancelEdit = () => {
     isEditing.value = false;
-    // Здесь можно добавить восстановление исходных данных, если это необходимо
+    form.username = props.user.username;
+    form.email = props.user.email;
 };
 
-// Сохранение изменений профиля
-const saveProfile = async () => {
-    // Реализуйте логику сохранения профиля. Например, можно использовать axios:
-    //
-    // try {
-    //   const response = await axios.post('/api/profile', user.value);
-    //   console.log('Profile saved:', response.data);
-    // } catch(error) {
-    //   console.error('Error saving profile', error);
-    // }
-    console.log('Profile saved:', user.value);
-    isEditing.value = false;
+const saveProfile = () => {
+    form.post('/profile', {
+        onSuccess: () => {
+            isEditing.value = false;
+        }
+    });
 };
 </script>
 

@@ -12,7 +12,8 @@ class CreatePostsTable extends Migration
             $table->id();  // Столбец id (auto increment)
             $table->string('title');  // Столбец title
             $table->text('content');  // Столбец content
-            $table->timestamps();  // Столбцы created_at и updated_at
+            $table->timestamps();
+            // Столбцы created_at и updated_at
         });
     }
 

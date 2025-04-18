@@ -5,12 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d52ee4fa-bf82-4f27-a061-9d7b8f5e195d" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/my-laravel-app/app/Http/Controllers/LoginController.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/my-laravel-app/resources/js/Pages/ProfileView.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/my-laravel-app/app/Http/Controllers/ProfileController.php" beforeDir="false" afterPath="$PROJECT_DIR$/my-laravel-app/app/Http/Controllers/ProfileController.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/my-laravel-app/app/Http/Controllers/RegisterController.php" beforeDir="false" afterPath="$PROJECT_DIR$/my-laravel-app/app/Http/Controllers/RegisterController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/my-laravel-app/app/Models/User.php" beforeDir="false" afterPath="$PROJECT_DIR$/my-laravel-app/app/Models/User.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/my-laravel-app/resources/js/Pages/LoginView.vue" beforeDir="false" afterPath="$PROJECT_DIR$/my-laravel-app/resources/js/Pages/LoginView.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/my-laravel-app/database/migrations/2025_04_01_181229_create_posts_table.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/my-laravel-app/resources/js/Pages/ProfileView.vue" beforeDir="false" afterPath="$PROJECT_DIR$/my-laravel-app/resources/js/Pages/ProfileView.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/my-laravel-app/routes/web.php" beforeDir="false" afterPath="$PROJECT_DIR$/my-laravel-app/routes/web.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />

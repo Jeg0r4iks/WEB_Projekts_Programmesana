@@ -1,0 +1,154 @@
+[33mcommit 5dd13c2fcdc1372cc38e3f6aba4dc77fe19063cb[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmaster[m[33m)[m
+Author: Jeg0r4iks <ja00020@rvt.lv>
+Date:   Sun Apr 6 21:46:46 2025 +0300
+
+    Added registration feature
+
+[1mdiff --git a/.idea/workspace.xml b/.idea/workspace.xml[m
+[1mindex 66c20e2..38fcf95 100644[m
+[1m--- a/.idea/workspace.xml[m
+[1m+++ b/.idea/workspace.xml[m
+[36m@@ -4,7 +4,13 @@[m
+     <option name="autoReloadType" value="SELECTIVE" />[m
+   </component>[m
+   <component name="ChangeListManager">[m
+[31m-    <list default="true" id="d52ee4fa-bf82-4f27-a061-9d7b8f5e195d" name="Changes" comment="" />[m
+[32m+[m[32m    <list default="true" id="d52ee4fa-bf82-4f27-a061-9d7b8f5e195d" name="Changes" comment="">[m
+[32m+[m[32m      <change afterPath="$PROJECT_DIR$/my-laravel-app/app/Http/Controllers/RegisterController.php" afterDir="false" />[m
+[32m+[m[32m      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />[m
+[32m+[m[32m      <change beforePath="$PROJECT_DIR$/my-laravel-app/app/Models/User.php" beforeDir="false" afterPath="$PROJECT_DIR$/my-laravel-app/app/Models/User.php" afterDir="false" />[m
+[32m+[m[32m      <change beforePath="$PROJECT_DIR$/my-laravel-app/resources/js/Pages/LoginView.vue" beforeDir="false" afterPath="$PROJECT_DIR$/my-laravel-app/resources/js/Pages/LoginView.vue" afterDir="false" />[m
+[32m+[m[32m      <change beforePath="$PROJECT_DIR$/my-laravel-app/routes/web.php" beforeDir="false" afterPath="$PROJECT_DIR$/my-laravel-app/routes/web.php" afterDir="false" />[m
+[32m+[m[32m    </list>[m
+     <option name="SHOW_DIALOG" value="false" />[m
+     <option name="HIGHLIGHT_CONFLICTS" value="true" />[m
+     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />[m
+[36m@@ -19,6 +25,24 @@[m
+       <executable path="composer" />[m
+     </execution>[m
+   </component>[m
+[32m+[m[32m  <component name="ExportToHTMLSettings">[m
+[32m+[m[32m    <option name="OUTPUT_DIRECTORY" value="$PROJECT_DIR$/../WEB\exportToHTML" />[m
+[32m+[m[32m  </component>[m
+[32m+[m[32m  <component name="Git.Settings">[m
+[32m+[m[32m    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />[m
+[32m+[m[32m  </component>[m
+[32m+[m[32m  <component name="GitHubPullRequestSearchHistory">{[m
+[32m+[m[32m  &quot;lastFilter&quot;: {[m
+[32m+[m[32m    &quot;state&quot;: &quot;OPEN&quot;,[m
+[32m+[m[32m    &quot;assignee&quot;: &quot;Jeg0r4iks&quot;[m
+[32m+[m[32m  }[m
+[32m+[m[32m}</component>[m
+[32m+[m[32m  <component name="GithubPullRequestsUISettings">{[m
+[32m+[m[32m  &quot;selectedUrlAndAccountId&quot;: {[m
+[32m+[m[32m    &quot;url&quot;: &quot;https://github.com/Jeg0r4iks/WEB_Projekts_Programmesana.git&quot;,[m
+[32m+[m[32m    &quot;accountId&quot;: &quot;35a17bf5-a44f-4c2c-93d8-7673af9c7670&quot;[m
+[32m+[m[32m  }[m
+[32m+[m[32m}</component>[m
+   <component name="HighlightingSettingsPerFile">[m
+     <setting file="file://$PROJECT_DIR$/my-laravel-app/resources/js/Components/navbar.vue" root0="FORCE_HIGHLIGHTING" />[m
+   </component>[m
+[36m@@ -76,6 +100,7 @@[m
+   &quot;associatedIndex&quot;: 0[m
+ }</component>[m
+   <component name="ProjectId" id="2tX5Mc4qRiDlSwv0yl5w9RPZHsn" />[m
+[32m+[m[32m  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />[m
+   <component name="ProjectViewState">[m
+     <option name="hideEmptyMiddlePackages" value="true" />[m
+     <option name="showLibraryContents" value="true" />[m
+[36m@@ -83,6 +108,8 @@[m
+   <component name="PropertiesComponent">{[m
+   &quot;keyToString&quot;: {[m
+     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,[m
+[32m+[m[32m    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,[m
+[32m+[m[32m    &quot;git-widget-placeholder&quot;: &quot;master&quot;,[m
+     &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,[m
+     &quot;last_opened_file_path&quot;: &quot;C:/xampp/htdocs/WEB/my-laravel-app/resources/js/Pages&quot;,[m
+     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,[m
+[36m@@ -90,6 +117,7 @@[m
+     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,[m
+     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,[m
+     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,[m
+[32m+[m[32m    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.lookFeel&quot;,[m
+     &quot;ts.external.directory.path&quot;: &quot;C:\\Program Files\\JetBrains\\PhpStorm 2024.3.3\\plugins\\javascript-plugin\\jsLanguageServicesImpl\\external&quot;,[m
+     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;[m
+   }[m
+[36m@@ -150,7 +178,10 @@[m
+       <workItem from="1742929483737" duration="379000" />[m
+       <workItem from="1743090257743" duration="2621000" />[m
+       <workItem from="1743523790084" duration="8309000" />[m
+[31m-      <workItem from="1743855807074" duration="1549000" />[m
+[32m+[m[32m      <workItem from="1743855807074" duration="3117000" />[m
+[32m+[m[32m      <workItem from="1743878378831" duration="3697000" />[m
+[32m+[m[32m      <workItem from="1743934891678" duration="2110000" />[m
+[32m+[m[32m      <workItem from="1743964489814" duration="625000" />[m
+     </task>[m
+     <servers />[m
+   </component>[m
+[1mdiff --git a/my-laravel-app/app/Http/Controllers/RegisterController.php b/my-laravel-app/app/Http/Controllers/RegisterController.php[m
+[1mnew file mode 100644[m
+[1mindex 0000000..caaeea7[m
+[1m--- /dev/null[m
+[1m+++ b/my-laravel-app/app/Http/Controllers/RegisterController.php[m
+[36m@@ -0,0 +1,24 @@[m
+[32m+[m[32m<?php[m
+[32m+[m[32mnamespace App\Http\Controllers;[m
+[32m+[m
+[32m+[m[32muse App\Http\Controllers\Controller;[m
+[32m+[m[32muse App\Models\User;[m
+[32m+[m[32muse Illuminate\Http\Request;[m
+[32m+[m[32muse Illuminate\Support\Facades\Hash;[m
+[32m+[m
+[32m+[m[32mclass RegisterController extends Controller[m
+[32m+[m[32m{[m
+[32m+[m[32m    public function register(Request $request)[m
+[32m+[m[32m    {[m
+[32m+[m[32m        // Просто создаем пользователя без валидации[m
+[32m+[m[32m        $user = User::create([[m
+[32m+[m[32m            'email' => $request->email,[m
+[32m+[m[32m            'password' => Hash::make($request->password),[m
+[32m+[m[32m        ]);[m
+[32m+[m
+[32m+[m[32m        return response()->json([[m
+[32m+[m[32m            'message' => 'Регистрация прошла успешно',[m
+[32m+[m[32m            'user' => $user,[m
+[32m+[m[32m        ], 201);[m
+[32m+[m[32m    }[m
+[32m+[m[32m}[m
+[1mdiff --git a/my-laravel-app/app/Models/User.php b/my-laravel-app/app/Models/User.php[m
+[1mindex 749c7b7..3a3571b 100644[m
+[1m--- a/my-laravel-app/app/Models/User.php[m
+[1m+++ b/my-laravel-app/app/Models/User.php[m
+[36m@@ -2,31 +2,25 @@[m
+ [m
+ namespace App\Models;[m
+ [m
+[31m-// use Illuminate\Contracts\Auth\MustVerifyEmail;[m
+ use Illuminate\Database\Eloquent\Factories\HasFactory;[m
+ use Illuminate\Foundation\Auth\User as Authenticatable;[m
+ use Illuminate\Notifications\Notifiable;[m
+[32m+[m[32muse Laravel\Sanctum\HasApiTokens; // подключи, если используешь Sanctum[m
+ [m
+ class User extends Authenticatable[m
+ {[m
+[31m-    /** @use HasFactory<\Database\Factories\UserFactory> */[m
+[31m-    use HasFactory, Notifiable;[m
+[32m+[m[32m    use HasApiTokens, HasFactory, Notifiable;[m
+ [m
+     /**[m
+[31m-     * The attributes that are mass assignable.[m
+[31m-     *[m
+[31m-     * @var list<string>[m
+[32m+[m[32m     * Поля, разрешённые для массового заполнения.[m
+      */[m
+     protected $fillable = [[m
+[31m-        'name',[m
+         'email',[m
+         'password',[m
+     ];[m
+ [m
+     /**[m
+[31m-     * The attributes that should be hidden for serialization.[m
+[31m-     *[m
+[31m-     * @var list<string>[m
+[32m+[m[32m     * Поля, скрытые при с�

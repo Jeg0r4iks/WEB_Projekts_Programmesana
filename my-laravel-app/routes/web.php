@@ -3,6 +3,8 @@ use App\Http\Controllers\InfoController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\ProfileController;
+
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -64,3 +66,7 @@ Route::post('/api/posts', [PostController::class, 'store']);
 Route::post('/register', [RegisterController::class, 'register']);
 Route::post('/login', [LoginController::class, 'login']);
 
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'show'])->name('profile');
+    Route::post('/profile', [ProfileController::class, 'update']);
+});
