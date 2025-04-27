@@ -43,7 +43,7 @@ export default {
         // Отправка нового поста в API
         async submitPost() {
             try {
-                const response = await axios.post('http://127.0.0.1:8000/api/posts', {
+                const response = await axios.post('/posts', {
                     title: this.post.title,
                     content: this.post.content
                 });
@@ -60,7 +60,7 @@ export default {
         // Получение списка публикаций
         async fetchPosts() {
             try {
-                const response = await axios.get('http://127.0.0.1:8000/api/posts');
+                const response = await axios.get('/posts');
                 this.posts = response.data;
             } catch (error) {
                 console.error("Ошибка при загрузке постов:", error);

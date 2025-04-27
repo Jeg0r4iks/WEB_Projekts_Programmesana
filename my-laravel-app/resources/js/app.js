@@ -5,13 +5,14 @@ import { createInertiaApp } from '@inertiajs/vue3';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { createApp, h } from 'vue';
 import '@fortawesome/fontawesome-free/css/all.css';
-import PostForm from './components/PostForm.vue'; // Добавлен компонент формы публикации
-//import { ZiggyVue } from '../../vendor/tightenco/ziggy';
+import PostForm from './components/PostForm.vue';
+import axios from 'axios';
 
-//const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
+// 🌐 Настройка Axios для работы с Laravel Sanctum
+axios.defaults.withCredentials = true;
+axios.defaults.baseURL = 'http://127.0.0.1:8000';
 
 createInertiaApp({
-    //title: (title) => `${title} - ${appName}`,
     resolve: (name) =>
         resolvePageComponent(
             `./Pages/${name}.vue`,
@@ -20,9 +21,7 @@ createInertiaApp({
     setup({ el, App, props, plugin }) {
         const app = createApp({ render: () => h(App, props) })
             .use(plugin)
-        //.use(ZiggyVue);
 
-        // Глобальная регистрация PostForm
         app.component('PostForm', PostForm);
 
         return app.mount(el);

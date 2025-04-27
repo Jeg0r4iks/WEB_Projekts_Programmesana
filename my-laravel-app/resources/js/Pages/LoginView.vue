@@ -58,8 +58,7 @@ const toggleMode = () => {
 };
 
 const handleSubmit = async () => {
-
-    if(!email.value || !password.value || (!isLogin.value && (!confirmPassword.value))) {
+    if(!email.value || !password.value || (!isLogin.value && !confirmPassword.value)) {
         showMessage('Please fill the fields');
         return;
     }
@@ -73,7 +72,8 @@ const handleSubmit = async () => {
         if(!passwordRegex.test(password.value)) {
             showMessage('Password should have 8 characters, special character and number');
             return;
-        } if (password.value !== confirmPassword.value) {
+        }
+        if (password.value !== confirmPassword.value) {
             showMessage('Passwords do not match');
             return;
         }
@@ -88,22 +88,27 @@ const handleSubmit = async () => {
 
     try {
         const endpoint = isLogin.value ? '/login' : '/register';
+
+        // Получаем CSRF cookie перед запросом
+        await axios.get('/sanctum/csrf-cookie');
+
+        // Отправляем запрос на регистрацию или логин
         const response = await axios.post(endpoint, formData);
 
-        if(isLogin.value) {
-            showMessage('Login successful');
+        showMessage(isLogin.value ? 'Login successful' : 'Registration successful');
+
+        // Перенаправление после успешной авторизации
+        setTimeout(() => {
             window.location.href = '/profile';
-        } else {
-            showMessage('Registration successful');
-            window.location.href = '/profile';
-        }
+        }, 1000);
+
         console.log('Success:', response.data);
     } catch (error) {
         if (error.response) {
             if (error.response.status === 401) {
                 showMessage('Incorrect email or password');
             } else if (error.response.data?.message) {
-                showMessage('An error occurred' + error.response.data.message);
+                showMessage('An error occurred: ' + error.response.data.message);
             } else {
                 showMessage('An error occurred');
             }
@@ -114,6 +119,7 @@ const handleSubmit = async () => {
         }
     }
 };
+
 </script>
 
 <style scoped>

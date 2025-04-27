@@ -1,56 +1,51 @@
 <template>
     <div class="profile">
         <h1>Profile</h1>
-
         <div class="profile-info">
             <div class="info-item">
                 <label>Username:</label>
-                <span v-if="!isEditing">{{ form.username }}</span>
-                <input
-                    v-else
-                    v-model="form.username"
-                    type="text"
-                    class="input-group"
-                />
+                <span>{{ user.username }}</span>
             </div>
-
             <div class="info-item">
                 <label>Email:</label>
-                <span v-if="!isEditing">{{ form.email }}</span>
-                <input
-                    v-else
-                    v-model="form.email"
-                    type="email"
-                    class="input-group"
-                />
+                <span>{{ user.email }}</span>
             </div>
         </div>
+        <button @click="editProfile">Edit Profile</button>
 
-        <div v-if="!isEditing">
-            <button @click="editProfile">Edit Profile</button>
-        </div>
-
-        <div v-else>
-            <button @click="saveProfile" :disabled="form.processing">Save</button>
-            <button @click="cancelEdit">Cancel</button>
-        </div>
+        <transition name="fade">
+            <div v-if="isEditing" class="edit-form">
+                <h2>Edit Profile</h2>
+                <div class="input-group">
+                    <label for="username">Username</label>
+                    <input v-model="user.username" type="text" id="username" />
+                </div>
+                <div class="input-group">
+                    <label for="email">Email</label>
+                    <input v-model="user.email" type="email" id="email" />
+                </div>
+                <button @click="saveProfile">Save</button>
+                <button @click="cancelEdit">Cancel</button>
+            </div>
+        </transition>
+        <button @click="goHome">Go to Home</button>
     </div>
 </template>
 
 <script setup>
 import { ref } from 'vue';
-import { useForm } from '@inertiajs/vue3';
+import { router } from '@inertiajs/vue3';
 
-const props = defineProps({
-    user: Object
+const goHome = () => {
+    router.visit('/');
+};
+
+const user = ref({
+    username: '',
+    email: ''
 });
 
 const isEditing = ref(false);
-
-const form = useForm({
-    username: props.user.username,
-    email: props.user.email
-});
 
 const editProfile = () => {
     isEditing.value = true;
@@ -58,16 +53,11 @@ const editProfile = () => {
 
 const cancelEdit = () => {
     isEditing.value = false;
-    form.username = props.user.username;
-    form.email = props.user.email;
 };
 
-const saveProfile = () => {
-    form.post('/profile', {
-        onSuccess: () => {
-            isEditing.value = false;
-        }
-    });
+const saveProfile = async () => {
+    console.log('Profile saved:', user.value);
+    isEditing.value = false;
 };
 </script>
 

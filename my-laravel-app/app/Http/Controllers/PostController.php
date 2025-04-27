@@ -11,7 +11,7 @@ class PostController extends Controller
     public function index()
     {
         $posts = Post::all();
-        return response()->json($posts);  // Возвращаем все посты в формате JSON
+        return response()->json($posts);
     }
 
     // Создание нового поста
@@ -25,8 +25,10 @@ class PostController extends Controller
         $post = Post::create([
             'title' => $validated['title'],
             'content' => $validated['content'],
+            'user_id' => auth()->id(),
         ]);
 
-        return response()->json($post, 201);  // Возвращаем созданный пост
+        return response()->json(['message' => 'Пост успешно создан', 'post' => $post], 201);
     }
+
 }
