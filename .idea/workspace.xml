@@ -4,20 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d52ee4fa-bf82-4f27-a061-9d7b8f5e195d" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/my-laravel-app/app/Http/Controllers/PostController.php" beforeDir="false" afterPath="$PROJECT_DIR$/my-laravel-app/app/Http/Controllers/PostController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/my-laravel-app/app/Http/Controllers/RegisterController.php" beforeDir="false" afterPath="$PROJECT_DIR$/my-laravel-app/app/Http/Controllers/RegisterController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/my-laravel-app/app/Models/Post.php" beforeDir="false" afterPath="$PROJECT_DIR$/my-laravel-app/app/Models/Post.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/my-laravel-app/composer.json" beforeDir="false" afterPath="$PROJECT_DIR$/my-laravel-app/composer.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/my-laravel-app/composer.lock" beforeDir="false" afterPath="$PROJECT_DIR$/my-laravel-app/composer.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/my-laravel-app/database/migrations/2025_04_01_181229_create_posts_table.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/my-laravel-app/resources/js/Components/PostForm.vue" beforeDir="false" afterPath="$PROJECT_DIR$/my-laravel-app/resources/js/Components/PostForm.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/my-laravel-app/resources/js/Pages/LoginView.vue" beforeDir="false" afterPath="$PROJECT_DIR$/my-laravel-app/resources/js/Pages/LoginView.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/my-laravel-app/resources/js/Pages/ProfileView.vue" beforeDir="false" afterPath="$PROJECT_DIR$/my-laravel-app/resources/js/Pages/ProfileView.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/my-laravel-app/resources/js/app.js" beforeDir="false" afterPath="$PROJECT_DIR$/my-laravel-app/resources/js/app.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/my-laravel-app/routes/web.php" beforeDir="false" afterPath="$PROJECT_DIR$/my-laravel-app/routes/web.php" afterDir="false" />
-    </list>
+    <list default="true" id="d52ee4fa-bf82-4f27-a061-9d7b8f5e195d" name="Changes" comment="Database migrations, posts are connected with users, registration and login cookies added." />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -195,11 +182,24 @@
       <workItem from="1744571848111" duration="248000" />
       <workItem from="1744654699471" duration="3880000" />
       <workItem from="1744728744290" duration="17660000" />
-      <workItem from="1745592681377" duration="15598000" />
+      <workItem from="1745592681377" duration="16513000" />
     </task>
+    <task id="LOCAL-00001" summary="Database migrations, posts are connected with users, registration and login cookies added.">
+      <option name="closed" value="true" />
+      <created>1745780208506</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1745780208506</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Database migrations, posts are connected with users, registration and login cookies added." />
+    <option name="LAST_COMMIT_MESSAGE" value="Database migrations, posts are connected with users, registration and login cookies added." />
   </component>
 </project>
