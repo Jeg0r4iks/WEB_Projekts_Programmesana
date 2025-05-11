@@ -12,7 +12,8 @@
             </div>
         </div>
         <button @click="editProfile">Edit Profile</button>
-
+        <button @click="goHome">Go to Home</button>
+        <button @click="logout">Log Out</button>
         <transition name="fade">
             <div v-if="isEditing" class="edit-form">
                 <h2>Edit Profile</h2>
@@ -28,13 +29,31 @@
                 <button @click="cancelEdit">Cancel</button>
             </div>
         </transition>
-        <button @click="goHome">Go to Home</button>
+
     </div>
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
+import axios from 'axios';
 import { router } from '@inertiajs/vue3';
+
+const logout = async () => {
+    try {
+        await axios.post('/logout');
+
+        user.value = {
+            username: '',
+            email: ''
+        };
+
+        isEditing.value = false;
+
+        router.visit('/login');
+    } catch (error) {
+        console.error('Error while logging out: ', error);
+    }
+};
 
 const goHome = () => {
     router.visit('/');
@@ -51,14 +70,37 @@ const editProfile = () => {
     isEditing.value = true;
 };
 
-const cancelEdit = () => {
+ const cancelEdit = () => {
     isEditing.value = false;
 };
 
 const saveProfile = async () => {
-    console.log('Profile saved:', user.value);
-    isEditing.value = false;
+    try {
+        await axios.post('/update-profile', {
+            username: user.value.username,
+            email: user.value.email
+        });
+        console.log('Profile saved:', user.value);
+        isEditing.value = false;
+    } catch (error) {
+        console.error('Error while loading profile', error);
+    }
 };
+
+const fetchUser = async () => {
+    try {
+        const response = await axios.get('/user');
+        user.value.username = response.data.username;
+        user.value.email = response.data.email;
+    } catch (error) {
+        console.error("Error while loading user data", error);
+        router.visit('/login');
+    }
+};
+
+onMounted(() => {
+    fetchUser();
+});
 </script>
 
 <style scoped>
@@ -74,11 +116,13 @@ const saveProfile = async () => {
 }
 
 .profile h1 {
-    font-size: 2rem;
+    font-family: "Perfectly Vintages";
+    font-size: 40px;
     margin-bottom: 20px;
 }
 
 .profile-info {
+    font-size: 20px;
     text-align: left;
     margin-bottom: 20px;
 }

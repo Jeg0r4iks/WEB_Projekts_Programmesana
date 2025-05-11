@@ -1,7 +1,6 @@
 <template>
     <navbar/>
     <h1>About Mireqx</h1>
-    <post-form></post-form>
     <AppFooter/>
 </template>
 

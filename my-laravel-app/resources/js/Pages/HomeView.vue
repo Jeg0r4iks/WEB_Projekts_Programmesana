@@ -12,12 +12,37 @@
             </div>
         </div>
     </div>
+
+    <post-form></post-form>
     <AppFooter/>
+
+    <div v-if="isModalOpen" class="modal" @click="closeModal">
+        <div class="modal-content" @click.stop>
+            <h2>{{ selectedPost.title }}</h2>
+            <p><strong>Author: </strong>{{ selectedPost.user ? selectedPost.user.username : 'Unknown' }}</p>
+            <p>{{ selectedPost.content }}</p>
+
+            <div v-if="selectedPost.comments && selectedPost.comments.length > 0">
+                <div v-for="comment in selectedPost.comments" :key="comment.id" class="comment">
+                    <p><strong>{{ comment.user.username }}:</strong> {{ comment.content }}</p>
+                </div>
+            </div>
+
+            <div v-if="isLoggedIn">
+                <textarea v-model="newCommentContent" placeholder="Add a comment..."></textarea>
+                <button @click="addComment(selectedPost.id)">Post Comment</button>
+            </div>
+            <p v-else>Please log in to comment.</p>
+
+            <button @click="closeModal">Close</button>
+        </div>
+    </div>
 </template>
 
 <script>
 import navbar from "@/Components/navbar.vue";
 import AppFooter from "@/Components/footer.vue";
+import axios from "axios";
 
 export default {
     name: "HomeView",
@@ -33,10 +58,54 @@ export default {
                 "Alexander McQueen",
                 "Rick Owens",
                 "Maison Margiela"
-            ]
+            ],
+            selectedPost: null,
+            isModalOpen: false,
+            isLoggedIn: false,
+            newCommentContent: "",
         };
+    },
+    methods: {
+        async checkLoginStatus() {
+            try {
+                const response = await axios.get('/user');
+                this.isLoggedIn = response.data ? true : false;
+            } catch (error) {
+                console.error("Error checking login status:", error);
+            }
+        },
+        async openModal(post) {
+            this.selectedPost = post;
+            this.isModalOpen = true;
+        },
+        closeModal() {
+            this.isModalOpen = false;
+            this.selectedPost = null;
+        },
+        async fetchPostComments(postId) {
+            try {
+                const response = await axios.get(`/posts/${postId}/comments`);
+                const post = this.posts.find(p => p.id === postId);
+                post.comments = response.data;
+            } catch (error) {
+                console.error("Error fetching comments:", error);
+            }
+        },
+        async addComment(postId) {
+            if (!this.newCommentContent) return;
+            try {
+                const response = await axios.post(`/posts/${postId}/comments`, { content: this.newCommentContent });
+                this.newCommentContent = "";
+                this.fetchPostComments(postId);
+            } catch (error) {
+                console.error("Error submitting comment:", error);
+            }
+        }
+    },
+    mounted() {
+        this.checkLoginStatus();
     }
-};
+}
 </script>
 
 <style scoped>

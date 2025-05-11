@@ -28,12 +28,15 @@
                 {{ message }}
             </div>
         </transition>
+        <button @click="goHome" class="home-button">Go to Home</button>
     </div>
+
 </template>
 
 <script setup>
 import { ref } from 'vue';
 import axios from 'axios';
+import {router} from "@inertiajs/vue3";
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const passwordRegex = /^(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?])(?=.*\d).{8,}$/;
@@ -45,6 +48,9 @@ const username = ref('');
 const visible = ref(false);
 const message = ref('');
 
+const goHome = () => {
+    router.visit('/');
+};
 const showMessage = (msg) => {
     message.value = msg;
     visible.value = true;
@@ -89,15 +95,12 @@ const handleSubmit = async () => {
     try {
         const endpoint = isLogin.value ? '/login' : '/register';
 
-        // Получаем CSRF cookie перед запросом
         await axios.get('/sanctum/csrf-cookie');
 
-        // Отправляем запрос на регистрацию или логин
         const response = await axios.post(endpoint, formData);
 
         showMessage(isLogin.value ? 'Login successful' : 'Registration successful');
 
-        // Перенаправление после успешной авторизации
         setTimeout(() => {
             window.location.href = '/profile';
         }, 1000);
@@ -191,7 +194,6 @@ button:hover {
     text-decoration: underline;
 }
 
-/* Стили для уведомления об ошибке/сообщения */
 .error-notification {
     position: fixed;
     top: 20px;
@@ -206,10 +208,18 @@ button:hover {
     font-size: 18px;
 }
 
-.fade-enter-active, .fade-leave-active {
-    transition: opacity 0.5s;
-}
-.fade-enter-from, .fade-leave-to {
-    opacity: 0;
+.home-button {
+    position: fixed;
+    top: 10px;
+    left: 20px;
+    padding: 10px 10px;
+    border: 1px solid black;
+    border-radius: 5px;
+    cursor: pointer;
+    font-family: 'Perfectly Vintages';
+    font-size: 20px;
+    z-index: 1000;
+    width: auto;
+    height: auto;
 }
 </style>

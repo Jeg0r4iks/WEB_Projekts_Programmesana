@@ -4,16 +4,12 @@
         <h1>History of Fashion</h1>
 
         <div class="content">
-            <!-- Filters Button on top of the history section -->
             <span class="filters-button" @click="toggleSidebar">
                 Filters
             </span>
 
-            <!-- Sidebar with Filters, only visible when showSidebar is true -->
             <div class="sidebar" v-if="showSidebar">
-                <!-- Filters Section (only shown when showFilters is true) -->
                 <div v-if="showFilters" class="filter-container">
-                    <!-- Cross Button to close filters -->
                     <span class="close-filter" @click="closeSidebar">&times;</span>
 
                     <input v-model="filter" type="text" placeholder="Search designers" class="search-box"/>
@@ -35,7 +31,7 @@
                 </div>
             </div>
         </div>
-
+        <post-form></post-form>
         <AppFooter/>
     </div>
 </template>
@@ -43,10 +39,11 @@
 <script>
 import navbar from "@/Components/navbar.vue";
 import AppFooter from "@/Components/footer.vue";
+import PostForm from "@/Components/PostForm.vue";
 
 export default {
     name: 'HistoryView',
-    components: { navbar, AppFooter },
+    components: {PostForm, navbar, AppFooter },
     data() {
         return {
             designers: [
@@ -63,8 +60,8 @@ export default {
             ],
             filter: '',
             selectedDesigner: null,
-            showSidebar: false,  // Sidebar is initially hidden
-            showFilters: false,  // Filters are initially hidden
+            showSidebar: false,
+            showFilters: false,
         };
     },
     computed: {
@@ -79,12 +76,12 @@ export default {
             this.selectedDesigner = designer;
         },
         toggleSidebar() {
-            this.showSidebar = !this.showSidebar;  // Toggle the sidebar visibility
-            this.showFilters = this.showSidebar;   // When sidebar is shown, show filters
+            this.showSidebar = !this.showSidebar;
+            this.showFilters = this.showSidebar;
         },
         closeSidebar() {
-            this.showSidebar = false;  // Hide the sidebar
-            this.showFilters = false;  // Hide the filters when closing the sidebar
+            this.showSidebar = false;
+            this.showFilters = false;
         }
     },
 };
@@ -132,7 +129,6 @@ h1 {
     overflow-y: auto;
 }
 
-/* Cross Button for Closing Filters */
 .close-filter {
     font-size: 30px;
     font-weight: bold;

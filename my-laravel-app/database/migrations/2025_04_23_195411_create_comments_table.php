@@ -10,9 +10,9 @@ class CreateCommentsTable extends Migration
     {
         Schema::create('comments', function (Blueprint $table) {
             $table->id();
-            $table->text('content');  // Текст комментария
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');  // Связь с пользователем
-            $table->foreignId('post_id')->constrained('posts')->onDelete('cascade');  // Связь с публикацией
+            $table->text('content'); // Текст комментария
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('post_id')->constrained('posts')->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -22,4 +22,3 @@ class CreateCommentsTable extends Migration
         Schema::dropIfExists('comments');
     }
 }
-

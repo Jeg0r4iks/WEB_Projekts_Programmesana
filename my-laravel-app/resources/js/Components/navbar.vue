@@ -13,7 +13,10 @@
             <a href="/style" class="desktop-only">Style</a>
             <a href="/about" class="desktop-only">About</a>
             <i :class="isDarkMode ? 'fas fa-sun' : 'fas fa-moon'" @click="toggleDarkMode"></i>
-            <a href="/login"><i class="fas fa-user"></i></a>
+            <a @click.prevent="goToProfile">
+                <i class="fas fa-user"></i>
+                <span v-if="user" class="username">{{ user.name }}</span>
+            </a>
         </div>
 
         <div v-if="isMenuOpen" class="mobile-menu">
@@ -26,12 +29,14 @@
 </template>
 
 <script>
+import axios from 'axios';
 export default {
     name: 'Navbar',
     data() {
         return {
             isDarkMode: localStorage.getItem('isDarkMode') === 'true',
-            isMenuOpen: false
+            isMenuOpen: false,
+            user: null
         };
     },
     methods: {
@@ -45,12 +50,28 @@ export default {
         },
         toggleMenu() {
             this.isMenuOpen = !this.isMenuOpen;
-        }
+        },
+        async fetchUser() {
+            try {
+                const response = await axios.get('/user');
+                this.user = response.data;
+            } catch (e) {
+                this.user = null;
+            }
+        },
+        goToProfile() {
+            if (this.user) {
+                this.$inertia.visit('/profile');
+            } else {
+                this.$inertia.visit('/login');
+            }
+        },
     },
     mounted() {
         if (this.isDarkMode) {
             document.body.classList.add('dark');
         }
+        this.fetchUser();
     }
 };
 </script>
@@ -192,4 +213,11 @@ body.dark nav .fa-bars:hover {
 body nav i:hover {
     color: rgb(255, 0, 0);
 }
+
+.username {
+    margin-left: 8px;
+    font-size: 16px;
+    font-weight: bold;
+}
+
 </style>
