@@ -7,7 +7,7 @@
                 <option v-for="category in categories" :key="category.id" :value="category.id">{{ category.name }}</option>
             </select>
         </div>
-
+        <div class="post-container">
         <div v-if="posts.length">
             <div v-for="post in posts" :key="post.id" class="post">
                 <h3>{{ post.title }}</h3>
@@ -43,7 +43,7 @@
                 </div>
             </div>
         </div>
-
+        </div>
         <div v-if="isLoggedIn">
             <form @submit.prevent="submitPost">
                 <div>
@@ -150,7 +150,7 @@ export default {
         async checkLoginStatus() {
             try {
                 const response = await axios.get('/user');
-                this.isLoggedIn = response.data ? true : false;
+                this.isLoggedIn = !!response.data;
                 if (this.isLoggedIn) {
                     this.currentUserId = response.data.id;
                 }
@@ -189,7 +189,7 @@ export default {
             try {
                 const response = await axios.post(`/posts/${postId}/comments`, { content: this.newCommentContent });
                 this.newCommentContent = "";
-                this.fetchComments(postId);
+                await this.fetchComments(postId);
             } catch (error) {
                 console.error("Error submitting comment:", error);
             }
@@ -198,7 +198,7 @@ export default {
         async addReaction(reactionType, postId) {
             try {
                 await axios.post(`/posts/${postId}/reactions`, { type: reactionType });
-                this.fetchPosts();
+                await this.fetchPosts();
             } catch (error) {
                 console.error("Error adding reaction:", error);
             }
@@ -255,6 +255,14 @@ h3 {
     padding: 10px;
     border-radius: 5px;
     margin-bottom: 20px;
+}
+
+.post-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+    margin: 20px 0;
 }
 
 .post-form {

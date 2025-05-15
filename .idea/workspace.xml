@@ -4,23 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d52ee4fa-bf82-4f27-a061-9d7b8f5e195d" name="Changes" comment="Database migrations, posts are connected with users, registration and login cookies added.">
+    <list default="true" id="d52ee4fa-bf82-4f27-a061-9d7b8f5e195d" name="Changes" comment="Added comments, reactions and categories.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/my-laravel-app/app/Http/Controllers/InfoController.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/my-laravel-app/app/Http/Controllers/PostController.php" beforeDir="false" afterPath="$PROJECT_DIR$/my-laravel-app/app/Http/Controllers/PostController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/my-laravel-app/app/Models/Post.php" beforeDir="false" afterPath="$PROJECT_DIR$/my-laravel-app/app/Models/Post.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/my-laravel-app/app/Models/User.php" beforeDir="false" afterPath="$PROJECT_DIR$/my-laravel-app/app/Models/User.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/my-laravel-app/database/migrations/2025_04_07_204621_create_users_table.php" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/my-laravel-app/database/migrations/2025_04_23_195411_create_comments_table.php" beforeDir="false" afterPath="$PROJECT_DIR$/my-laravel-app/database/migrations/2025_04_23_195411_create_comments_table.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/my-laravel-app/database/migrations/2025_04_23_195436_create_reactions_table.php" beforeDir="false" afterPath="$PROJECT_DIR$/my-laravel-app/database/migrations/2025_04_23_195436_create_reactions_table.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/my-laravel-app/resources/js/Components/PostForm.vue" beforeDir="false" afterPath="$PROJECT_DIR$/my-laravel-app/resources/js/Components/PostForm.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/my-laravel-app/resources/js/Components/navbar.vue" beforeDir="false" afterPath="$PROJECT_DIR$/my-laravel-app/resources/js/Components/navbar.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/my-laravel-app/resources/js/Pages/AboutView.vue" beforeDir="false" afterPath="$PROJECT_DIR$/my-laravel-app/resources/js/Pages/AboutView.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/my-laravel-app/resources/js/Pages/HistoryView.vue" beforeDir="false" afterPath="$PROJECT_DIR$/my-laravel-app/resources/js/Pages/HistoryView.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/my-laravel-app/resources/js/Pages/HomeView.vue" beforeDir="false" afterPath="$PROJECT_DIR$/my-laravel-app/resources/js/Pages/HomeView.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/my-laravel-app/resources/js/Pages/LoginView.vue" beforeDir="false" afterPath="$PROJECT_DIR$/my-laravel-app/resources/js/Pages/LoginView.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/my-laravel-app/resources/js/Pages/ProfileView.vue" beforeDir="false" afterPath="$PROJECT_DIR$/my-laravel-app/resources/js/Pages/ProfileView.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/my-laravel-app/routes/web.php" beforeDir="false" afterPath="$PROJECT_DIR$/my-laravel-app/routes/web.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -207,7 +194,10 @@
       <workItem from="1746390974795" duration="4335000" />
       <workItem from="1746533501907" duration="628000" />
       <workItem from="1746635271120" duration="24624000" />
-      <workItem from="1746958902865" duration="9370000" />
+      <workItem from="1746958902865" duration="13345000" />
+      <workItem from="1747079620737" duration="2963000" />
+      <workItem from="1747123929376" duration="637000" />
+      <workItem from="1747302430291" duration="443000" />
     </task>
     <task id="LOCAL-00001" summary="Database migrations, posts are connected with users, registration and login cookies added.">
       <option name="closed" value="true" />
@@ -225,7 +215,15 @@
       <option name="project" value="LOCAL" />
       <updated>1745781423664</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="Added comments, reactions and categories.">
+      <option name="closed" value="true" />
+      <created>1746971858906</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1746971858907</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -244,6 +242,7 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Database migrations, posts are connected with users, registration and login cookies added." />
-    <option name="LAST_COMMIT_MESSAGE" value="Database migrations, posts are connected with users, registration and login cookies added." />
+    <MESSAGE value="Added comments, reactions and categories." />
+    <option name="LAST_COMMIT_MESSAGE" value="Added comments, reactions and categories." />
   </component>
 </project>
