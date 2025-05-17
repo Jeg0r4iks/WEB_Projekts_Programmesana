@@ -68,7 +68,7 @@ export default {
     methods: {
         async checkLoginStatus() {
             try {
-                const response = await axios.get('/user');
+                const response = await axios.get('http://127.0.0.1:8000/user');
                 this.isLoggedIn = response.data ? true : false;
             } catch (error) {
                 console.error("Error checking login status:", error);

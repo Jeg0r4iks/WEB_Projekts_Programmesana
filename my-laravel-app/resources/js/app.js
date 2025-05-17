@@ -8,7 +8,6 @@ import '@fortawesome/fontawesome-free/css/all.css';
 import PostForm from './components/PostForm.vue';
 import axios from 'axios';
 
-// 🌐 Настройка Axios для работы с Laravel Sanctum
 axios.defaults.withCredentials = true;
 axios.defaults.baseURL = 'http://127.0.0.1:8000';
 
@@ -29,4 +28,5 @@ createInertiaApp({
     progress: {
         color: '#4B5563',
     },
+
 });

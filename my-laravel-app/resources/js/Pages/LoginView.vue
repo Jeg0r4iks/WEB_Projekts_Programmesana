@@ -97,7 +97,9 @@ const handleSubmit = async () => {
 
         await axios.get('/sanctum/csrf-cookie');
 
-        const response = await axios.post(endpoint, formData);
+        const response = await axios.post(endpoint, formData, {
+            withCredentials: true
+        });
 
         showMessage(isLogin.value ? 'Login successful' : 'Registration successful');
 

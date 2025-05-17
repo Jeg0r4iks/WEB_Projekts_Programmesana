@@ -16,16 +16,15 @@
                 </div>
                 <p>{{ post.content }}</p>
 
-                <!-- Reaction buttons and counts -->
                 <div class="reaction-icons">
-                    <button @click="addReaction('like', post.id)">👍 Like</button>
-                    <span>{{ post.reactionCounts.like }}</span>
+                <button @click="addReaction('like', post.id)">👍 Like</button>
+                <span>{{ post.reactionCounts?.like ?? 0 }}</span>
 
-                    <button @click="addReaction('dislike', post.id)">👎 Dislike</button>
-                    <span>{{ post.reactionCounts.dislike }}</span>
+                <button @click="addReaction('dislike', post.id)">👎 Dislike</button>
+                <span>{{ post.reactionCounts?.dislike ?? 0 }}</span>
 
-                    <button @click="addReaction('hearts', post.id)">❤️ Heart</button>
-                    <span>{{ post.reactionCounts.hearts }}</span>
+                <button @click="addReaction('hearts', post.id)">❤️ Heart</button>
+                <span>{{ post.reactionCounts?.hearts ?? 0 }}</span>
                 </div>
 
                 <button v-if="post.user && post.user.id === currentUserId" @click="deletePost(post.id)">Delete Post</button>
