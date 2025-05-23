@@ -12,7 +12,7 @@ class ReactionController extends Controller
     public function store(Request $request, $postId)
     {
         $request->validate([
-            'type' => 'required|in:like,dislike,hearts',
+            'type' => 'required|in:like,dislike,heart',
         ]);
 
         $post = Post::find($postId);
@@ -25,16 +25,18 @@ class ReactionController extends Controller
             ->first();
 
         if ($existingReaction) {
-            return response()->json(['message' => 'You have already reacted to this post'], 400);
+            $existingReaction->type = $request->type;
+            $existingReaction->save();
+            return response()->json(['message' => 'Reaction updated.']);
         }
 
-        $reaction = Reaction::create([
+        Reaction::create([
             'type' => $request->type,
             'user_id' => Auth::id(),
             'post_id' => $postId,
         ]);
 
-        return response()->json($reaction, 201);
+        return response()->json(['message' => 'Reaction added.'], 201);
     }
 
     public function getReactions($postId)
@@ -44,7 +46,7 @@ class ReactionController extends Controller
         $reactionCounts = [
             'like' => $reactions->where('type', 'like')->count(),
             'dislike' => $reactions->where('type', 'dislike')->count(),
-            'hearts' => $reactions->where('type', 'hearts')->count(),
+            'heart' => $reactions->where('type', 'heart')->count(),
         ];
 
         return response()->json($reactionCounts);

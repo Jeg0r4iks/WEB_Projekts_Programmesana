@@ -1,149 +1,231 @@
 <template>
     <div class="post-form">
-        <div v-if="categories.length">
-            <label for="categoryFilter">Filter by Category:</label>
-            <select v-model="selectedCategory" @change="fetchPosts">
-                <option value="">All Categories</option>
-                <option v-for="category in categories" :key="category.id" :value="category.id">{{ category.name }}</option>
-            </select>
+        <!-- Filter Bar -->
+        <div v-if="categories.length" class="filter-bar">
+            <div class="search-box">
+                <input
+                    type="text"
+                    v-model="searchQuery"
+                    placeholder="Search posts..."
+                />
+                <button @click="fetchPosts">Search</button>
+            </div>
+
+            <div class="category-box" v-if="!hideCategories">
+                <label for="categoryFilter">Filter by Category:</label>
+                <select v-model="selectedCategory" @change="fetchPosts">
+                    <option value="">All Categories</option>
+                    <option v-for="category in categories" :key="category.id" :value="category.id">
+                        {{ category.name }}
+                    </option>
+                </select>
+            </div>
+
+            <div>
+                <label for="sortBy">Sort By:</label>
+                <select v-model="sortBy" @change="fetchPosts">
+                    <option value="">Default</option>
+                    <option value="likes">Likes</option>
+                    <option value="date">Date</option>
+                </select>
+            </div>
         </div>
+
+        <!-- Posts List -->
         <div class="post-container">
-        <div v-if="posts.length">
-            <div v-for="post in posts" :key="post.id" class="post">
-                <h3>{{ post.title }}</h3>
-                <div class="user_name">
-                    <p><strong>Author: </strong>{{ post.user ? post.user.username : 'Unknown' }}</p>
-                </div>
-                <p>{{ post.content }}</p>
+            <div v-if="posts.length">
+                <div v-for="post in posts" :key="post.id" class="post">
+                    <h3 v-html="highlight(post.title)"></h3>
+                    <img
+                        v-if="post.image_url"
+                        :src="post.image_url"
+                        class="post-uploaded-image"
+                    />
 
-                <div class="reaction-icons">
-                <button @click="addReaction('like', post.id)">👍 Like</button>
-                <span>{{ post.reactionCounts?.like ?? 0 }}</span>
-
-                <button @click="addReaction('dislike', post.id)">👎 Dislike</button>
-                <span>{{ post.reactionCounts?.dislike ?? 0 }}</span>
-
-                <button @click="addReaction('hearts', post.id)">❤️ Heart</button>
-                <span>{{ post.reactionCounts?.hearts ?? 0 }}</span>
-                </div>
-
-                <button v-if="post.user && post.user.id === currentUserId" @click="deletePost(post.id)">Delete Post</button>
-                <button @click="openModal(post)">Open Full Post</button>
-
-                <div v-if="post.id === selectedPost?.id">
-                    <div v-for="comment in selectedPost.comments" :key="comment.id" class="comment">
-                        <p><strong>{{ comment.user.username }}:</strong> {{ comment.content }}</p>
+                    <div class="user_name">
+                        <p><strong>Author: </strong>{{ post.user?.username || 'Unknown' }}</p>
+                        <p>{{ post.created_date }}</p>
                     </div>
-                    <div v-if="isLoggedIn">
-                        <textarea v-model="newCommentContent" placeholder="Add a comment..."></textarea>
-                        <button @click="addComment(post.id)">Post Comment</button>
+                    <p v-html="highlight(post.content)"></p>
+
+                    <div class="reaction-icons">
+                        <button @click="addReaction('like', post.id)">👍 Like</button>
+                        <span>{{ post.reactionCounts?.like }}</span>
+                        <button @click="addReaction('dislike', post.id)">👎 Dislike</button>
+                        <span>{{ post.reactionCounts?.dislike }}</span>
+                        <button @click="addReaction('heart', post.id)">❤️ Heart</button>
+                        <span>{{ post.reactionCounts?.heart }}</span>
                     </div>
-                    <p v-else>Please log in to comment.</p>
+
+                    <!-- Admin/Owner Actions -->
+                    <button
+                        v-if="(post.user && post.user.id === currentUserId) || isAdmin"
+                        @click="deletePost(post.id)"
+                        class="btn-delete"
+                    >
+                        Delete Post
+                    </button>
+                    <button
+                        v-if="isAdmin || (post.user && post.user.id === currentUserId)"
+                        @click="startEdit(post)"
+                        class="btn-edit"
+                    >
+                        Edit Post
+                    </button>
+
+                    <!-- Open Modal -->
+                    <button @click="openModal(post)">Open Full Post</button>
+
+                    <!-- Inline Comments -->
+                    <div v-if="post.id === selectedPost?.id">
+                        <div v-for="comment in selectedPost.comments" :key="comment.id" class="comment">
+                            <p><strong>{{ comment.user.username }}:</strong> {{ comment.content }}</p>
+                        </div>
+                        <div v-if="isLoggedIn">
+                            <textarea v-model="newCommentContent" placeholder="Add a comment..."></textarea>
+                            <button @click="addComment(post.id)">Post Comment</button>
+                        </div>
+                        <p v-else>Please log in to comment.</p>
+                    </div>
                 </div>
             </div>
         </div>
-        </div>
-        <div v-if="isLoggedIn">
-            <form @submit.prevent="submitPost">
-                <div>
-                    <label>Post Title:</label>
-                    <input type="text" v-model="post.title" required />
-                </div>
-                <div>
-                    <label>Select Categories:</label>
-                    <select v-model="post.category_ids" multiple>
-                        <option v-for="category in categories" :key="category.id" :value="category.id">
-                            {{ category.name }}
-                        </option>
-                    </select>
-                </div>
-                <div>
-                    <label>Content:</label>
-                    <textarea v-model="post.content" required></textarea>
-                    <button type="submit">Publish Post</button>
-                </div>
-            </form>
-            <p v-if="message" class="success-message">{{ message }}</p>
-        </div>
-        <p v-else>There are no posts yet.</p>
-    </div>
 
-    <div v-if="isModalOpen" class="modal" @click="closeModal">
-        <div class="modal-content" @click.stop>
-            <h2>{{ selectedPost.title }}</h2>
-            <p><strong>Author: </strong>{{ selectedPost.user ? selectedPost.user.username : 'Unknown' }}</p>
-            <p>{{ selectedPost.content }}</p>
-
-            <div v-if="selectedPost.comments && selectedPost.comments.length > 0">
-                <div v-for="comment in selectedPost.comments" :key="comment.id" class="comment">
-                    <p><strong>{{ comment.user.username }}:</strong> {{ comment.content }}</p>
-                </div>
+        <!-- Create Post -->
+        <div v-if="isLoggedIn" class="create-post-wrapper">
+            <div class="create-post-container">
+                <h2 class="create-title">Write your own thoughts</h2>
+                <form @submit.prevent="submitPost" enctype="multipart/form-data">
+                    <div>
+                        <label>Post Title:</label>
+                        <input type="text" v-model="post.title" required />
+                    </div>
+                    <div>
+                        <label>Select Categories:</label>
+                        <select v-model="post.category_ids" multiple>
+                            <option v-for="c in categories" :key="c.id" :value="c.id">{{ c.name }}</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>Content:</label>
+                        <textarea v-model="post.content" required></textarea>
+                        <label>Photo:</label>
+                        <input type="file" accept="image/*" @change="handleImageUpload" ref="fileInput"/>
+                        <button type="submit">Publish Post</button>
+                    </div>
+                </form>
+                <p v-if="message" class="success-message">{{ message }}</p>
             </div>
+        </div>
+        <p v-else>Log in to add post</p>
 
-            <div v-if="isLoggedIn">
-                <textarea v-model="newCommentContent" placeholder="Add a comment..."></textarea>
-                <button @click="addComment(selectedPost.id)">Post Comment</button>
+        <!-- Full Post Modal -->
+        <div v-if="isModalOpen" class="modal" @click="closeModal">
+            <div class="modal-content" @click.stop>
+                <h2>{{ selectedPost.user.username + ' post' }}</h2>
+                <div v-if="selectedPost.comments?.length">
+                    <div v-for="cm in selectedPost.comments" :key="cm.id" class="comment">
+                        <div class="comment-header">
+                            <strong>{{ cm.user.username }}: {{ cm.content }}</strong>
+                            <span class="comment-date">{{ cm.created_date }}</span>
+                        </div>
+                    </div>
+                </div>
+                <div v-if="isLoggedIn">
+                    <textarea v-model="newCommentContent" placeholder="Add a comment..."></textarea>
+                    <button @click="addComment(selectedPost.id)">Post Comment</button>
+                </div>
+                <p v-else>Please log in to comment.</p>
+                <button @click="closeModal">Close</button>
             </div>
-            <p v-else>Please log in to comment.</p>
+        </div>
 
-            <button @click="closeModal">Close</button>
+        <!-- Edit Post Modal -->
+        <div v-if="editingPost" class="edit-overlay">
+            <div class="edit-container">
+                <h3>Edit Post</h3>
+                <input v-model="editingPost.title" placeholder="Заголовок" />
+                <textarea v-model="editingPost.content" placeholder="Содержимое"></textarea>
+                <label>Select Categories:</label>
+                <select v-model="editingPost.category_ids" multiple>
+                    <option v-for="c in categories" :key="c.id" :value="c.id">{{ c.name }}</option>
+                </select>
+                <button @click="updatePost">Save</button>
+                <button @click="cancelEdit">Cancel</button>
+            </div>
         </div>
     </div>
 </template>
 
 <script>
 import axios from 'axios';
-
 export default {
+    name: 'PostForm',
+    props: {
+        hideCategories: Boolean
+    },
     data() {
         return {
-            post: {
-                title: '',
-                content: '',
-                category_ids: [],
-            },
+            post: { title: '', content: '', category_ids: [] },
             selectedCategory: '',
+            searchQuery: '',
+            sortBy: '',
             message: '',
             posts: [],
             categories: [],
             isLoggedIn: false,
+            isAdmin: false,
             currentUserId: null,
             isModalOpen: false,
             selectedPost: null,
-            newCommentContent: "",
+            newCommentContent: '',
+            imageFile: null,
+            editingPost: null
         };
     },
     methods: {
+        highlight(text) {
+            if (!this.searchQuery) return text;
+            const esc = this.searchQuery.replace(/[.*+?^${}()|[\\]\\]/g, '\\$&');
+            return text.replace(new RegExp(`(${esc})`, 'gi'), '<mark>$1</mark>');
+        },
+        handleImageUpload(e) {
+            this.imageFile = e.target.files[0];
+        },
         async submitPost() {
-            try {
-                const response = await axios.post('/posts', {
-                    title: this.post.title,
-                    content: this.post.content,
-                    category_ids: this.post.category_ids,
-                });
-                this.message = response.data.message;
-                await this.fetchPosts();
-                this.post.title = '';
-                this.post.content = '';
-                this.post.category_ids = [];
-            } catch (error) {
-                console.error("Error while sending posts:", error);
-            }
+            const fd = new FormData();
+            fd.append('title', this.post.title);
+            fd.append('content', this.post.content);
+            this.post.category_ids.forEach(id => fd.append('category_ids[]', id));
+            if (this.imageFile) fd.append('image', this.imageFile);
+            const res = await axios.post('/posts', fd, {
+                headers: { 'Content-Type': 'multipart/form-data' }
+            });
+            this.message = res.data.message;
+            this.fetchPosts();
+            this.post.title = '';
+            this.post.content = '';
+            this.post.category_ids = [];
+            this.imageFile = null;
+            this.$refs.fileInput.value = '';
         },
         async fetchPosts() {
             try {
                 let url = '/posts';
-                if (this.selectedCategory) {
-                    url += `?category_id=${this.selectedCategory}`;
-                }
+                const params = [];
+                if (this.selectedCategory) params.push(`category_id=${this.selectedCategory}`);
+                if (this.searchQuery.trim()) params.push(`search=${encodeURIComponent(this.searchQuery.trim())}`);
+                if (this.sortBy === 'likes') params.push('sort=likes');
+                else if (this.sortBy === 'date') params.push('sort=date');
+                if (params.length) url += '?' + params.join('&');
                 const response = await axios.get(url);
                 this.posts = response.data;
                 for (let post of this.posts) {
                     const reactionResponse = await axios.get(`/posts/${post.id}/reactions`);
-                    post.reactionCounts = reactionResponse.data || { like: 0, dislike: 0, hearts: 0 };
+                    post.reactionCounts = reactionResponse.data || { like: 0, dislike: 0, heart: 0 };
                 }
             } catch (error) {
-                console.error("Error while loading posts:", error);
+                console.error(error);
             }
         },
         async checkLoginStatus() {
@@ -152,18 +234,16 @@ export default {
                 this.isLoggedIn = !!response.data;
                 if (this.isLoggedIn) {
                     this.currentUserId = response.data.id;
+                    this.isAdmin = response.data.is_admin;
                 }
-            } catch (error) {
-                console.error("Error checking login status:", error);
-            }
+            } catch {};
         },
         async deletePost(postId) {
             try {
-                const response = await axios.delete(`/posts/${postId}`);
-                this.message = response.data.message;
-                await this.fetchPosts();
-            } catch (error) {
-                console.error("Error while deleting post:", error);
+                await axios.delete(`/posts/${postId}`);
+                this.fetchPosts();
+            } catch (e) {
+                console.error(e);
             }
         },
         openModal(post) {
@@ -177,47 +257,61 @@ export default {
         },
         async fetchComments(postId) {
             try {
-                const response = await axios.get(`/posts/${postId}/comments`);
-                this.selectedPost.comments = response.data;
-            } catch (error) {
-                console.error("Error fetching comments:", error);
-            }
+                const res = await axios.get(`/posts/${postId}/comments`);
+                this.selectedPost.comments = res.data;
+            } catch {};
         },
         async addComment(postId) {
             if (!this.newCommentContent) return;
             try {
-                const response = await axios.post(`/posts/${postId}/comments`, { content: this.newCommentContent });
-                this.newCommentContent = "";
-                await this.fetchComments(postId);
-            } catch (error) {
-                console.error("Error submitting comment:", error);
-            }
+                await axios.post(`/posts/${postId}/comments`, { content: this.newCommentContent });
+                this.newCommentContent = '';
+                this.fetchComments(postId);
+            } catch {};
         },
-
-        async addReaction(reactionType, postId) {
+        async addReaction(type, postId) {
             try {
-                await axios.post(`/posts/${postId}/reactions`, { type: reactionType });
-                await this.fetchPosts();
-            } catch (error) {
-                console.error("Error adding reaction:", error);
-            }
+                await axios.post(`/posts/${postId}/reactions`, { type });
+                this.fetchPosts();
+            } catch {};
         },
-
         async fetchCategories() {
             try {
-                const response = await axios.get('/categories');
-                this.categories = response.data;
-            } catch (error) {
-                console.error("Error while fetching categories:", error);
-            }
+                const res = await axios.get('/categories');
+                this.categories = res.data;
+            } catch {};
         },
+        startEdit(post) {
+            this.editingPost = {
+                id: post.id,
+                title: post.title,
+                content: post.content,
+                category_ids: post.categories.map(c => c.id)
+            };
+        },
+        cancelEdit() {
+            this.editingPost = null;
+        },
+        async updatePost() {
+            try {
+                const payload = {
+                    title: this.editingPost.title,
+                    content: this.editingPost.content,
+                    category_ids: this.editingPost.category_ids
+                };
+                await axios.put(`/posts/${this.editingPost.id}`, payload);
+                this.editingPost = null;
+                this.fetchPosts();
+            } catch (e) {
+                console.error(e);
+            }
+        }
     },
     mounted() {
         this.checkLoginStatus();
-        this.fetchCategories();
-        this.fetchPosts();
+        this.fetchCategories().then(this.fetchPosts);
     }
-}
+};
 </script>
 
 <style scoped>
@@ -240,12 +334,13 @@ h3 {
 
 .user_name p {
     font-family: "Perfectly Vintages";
-    font-size: 20px;
-    text-align: center;
+    font-size: 15px;
     font-weight: normal;
 }
-.user_name strong {
-    font-weight: normal;
+.user_name {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .post {
@@ -254,14 +349,7 @@ h3 {
     padding: 10px;
     border-radius: 5px;
     margin-bottom: 20px;
-}
-
-.post-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    justify-content: center;
-    margin: 20px 0;
+    flex: 0 0 30%;
 }
 
 .post-form {
@@ -353,4 +441,94 @@ button {
     font-size: 1.5rem;
     cursor: pointer;
 }
+
+.filter-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.search-box {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.search-box input {
+    padding: 6px 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.search-box button {
+    padding: 6px 12px;
+    background: #222;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.search-box button:hover {
+    background: red;
+}
+
+mark {
+    background-color: yellow;
+    padding: 0 2px;
+    border-radius: 2px;
+}
+
+.post-container > div {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 40px;
+    align-items: start;
+}
+
+@media (max-width: 960px) {
+    .post-container > div {
+        grid-template-columns: 1fr;
+    }
+}
+
+.post-container {
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90vw !important;
+    max-width: 1200px !important;
+}
+
+.post-uploaded-image {
+    width: 100%;
+    margin: 10px 0;
+    border-radius: 4px;
+}
+
+.comment-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.comment-date {
+    font-size: 0.85em;
+    color: #666;
+}
+
+/* Добавьте в <style scoped> */
+.create-post-container {
+    margin-top: 60px;
+}
+.create-post-container .create-title {
+    text-align: center;
+    font-family: "Perfectly Vintages";
+    font-size: 35px;
+    margin-bottom: 20px;
+}
+
 </style>

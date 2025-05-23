@@ -1,7 +1,6 @@
 <template>
     <nav :class="{ dark: isDarkMode }">
         <div class="left">
-            <i class="fas fa-search"></i>
             <a href="/history" class="desktop-only">History</a>
             <a href="/runway" class="desktop-only">Runway</a>
             <i class="fas fa-bars mobile-only" @click="toggleMenu"></i>

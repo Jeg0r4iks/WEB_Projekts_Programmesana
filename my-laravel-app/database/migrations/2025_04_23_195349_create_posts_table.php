@@ -12,7 +12,8 @@ class CreatePostsTable extends Migration
             $table->id();
             $table->string('title');
             $table->text('content');
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');  // Связь с пользователем
+            $table->string('path')->nullable();
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -22,4 +23,3 @@ class CreatePostsTable extends Migration
         Schema::dropIfExists('posts');
     }
 }
-

@@ -2,15 +2,7 @@
     <div class="style">
         <navbar />
         <h1>Find your style</h1>
-
-        <div class="info-container">
-            <div v-for="item in info" :key="item.id" class="info-item">
-                <h2>{{ item.title }}</h2>
-                <p>{{ item.description }}</p>
-                <img :src="`http://127.0.0.1:8000/storage/images/${item.img}`" :alt="item.title">
-            </div>
-        </div>
-
+        <post-form :hide-categories="true"/>
         <AppFooter />
     </div>
 </template>
@@ -25,17 +17,17 @@ export default {
     components: { navbar, AppFooter },
     data() {
         return {
-            info: [] // Here the data fetched from the API will be stored
+            info: []
         };
     },
     mounted() {
-        this.fetchInfo(); // Fetch the data when the component is mounted
+        this.fetchInfo();
     },
     methods: {
         async fetchInfo() {
             try {
-                const response = await axios.get("/info"); // Fetch data from the API
-                this.info = response.data; // Store the fetched data in 'info'
+                const response = await axios.get("/info");
+                this.info = response.data;
             } catch (error) {
                 console.error("Error fetching data:", error);
             }
@@ -67,7 +59,7 @@ h1 {
 .info-item {
     display: inline-block;
     background: white;
-    padding: 20px; /* Увеличил общий отступ */
+    padding: 20px;
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     text-align: center;

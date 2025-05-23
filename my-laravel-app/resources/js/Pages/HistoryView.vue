@@ -31,7 +31,7 @@
                 </div>
             </div>
         </div>
-        <post-form></post-form>
+        <post-form :hide-categories="true"/>
         <AppFooter/>
     </div>
 </template>
@@ -39,11 +39,10 @@
 <script>
 import navbar from "@/Components/navbar.vue";
 import AppFooter from "@/Components/footer.vue";
-import PostForm from "@/Components/PostForm.vue";
 
 export default {
     name: 'HistoryView',
-    components: {PostForm, navbar, AppFooter },
+    components: { navbar, AppFooter },
     data() {
         return {
             designers: [

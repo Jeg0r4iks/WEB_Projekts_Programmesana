@@ -4,9 +4,17 @@
         <p class="welcome-text">Welcome to Mireqx!</p>
 
         <div class="image-grid">
-            <div class="image-container" v-for="(image, index) in previewImages" :key="index">
+            <div
+                class="image-container"
+                v-for="(image, index) in previewImages"
+                :key="index"
+            >
                 <a :href="`/history?designer=${designerNames[index]}`">
-                    <img :src="image" alt="Fashion preview" class="preview-img"/>
+                    <img
+                        :src="image"
+                        alt="Fashion preview"
+                        class="preview-img"
+                    />
                     <p class="overlay-text">{{ designerNames[index] }}</p>
                 </a>
             </div>
@@ -19,18 +27,35 @@
     <div v-if="isModalOpen" class="modal" @click="closeModal">
         <div class="modal-content" @click.stop>
             <h2>{{ selectedPost.title }}</h2>
-            <p><strong>Author: </strong>{{ selectedPost.user ? selectedPost.user.username : 'Unknown' }}</p>
+            <p>
+                <strong>Author: </strong>
+                {{ selectedPost.user ? selectedPost.user.username : 'Unknown' }}
+            </p>
             <p>{{ selectedPost.content }}</p>
 
-            <div v-if="selectedPost.comments && selectedPost.comments.length > 0">
-                <div v-for="comment in selectedPost.comments" :key="comment.id" class="comment">
-                    <p><strong>{{ comment.user.username }}:</strong> {{ comment.content }}</p>
+            <div
+                v-if="selectedPost.comments && selectedPost.comments.length > 0"
+            >
+                <div
+                    v-for="comment in selectedPost.comments"
+                    :key="comment.id"
+                    class="comment"
+                >
+                    <p>
+                        <strong>{{ comment.user.username }}:</strong>
+                        {{ comment.content }}
+                    </p>
                 </div>
             </div>
 
             <div v-if="isLoggedIn">
-                <textarea v-model="newCommentContent" placeholder="Add a comment..."></textarea>
-                <button @click="addComment(selectedPost.id)">Post Comment</button>
+        <textarea
+            v-model="newCommentContent"
+            placeholder="Add a comment..."
+        ></textarea>
+                <button @click="addComment(selectedPost.id)">
+                    Post Comment
+                </button>
             </div>
             <p v-else>Please log in to comment.</p>
 
@@ -62,14 +87,14 @@ export default {
             selectedPost: null,
             isModalOpen: false,
             isLoggedIn: false,
-            newCommentContent: "",
+            newCommentContent: ""
         };
     },
     methods: {
         async checkLoginStatus() {
             try {
-                const response = await axios.get('http://127.0.0.1:8000/user');
-                this.isLoggedIn = response.data ? true : false;
+                const response = await axios.get("/user");
+                this.isLoggedIn = !!response.data;
             } catch (error) {
                 console.error("Error checking login status:", error);
             }
@@ -85,8 +110,8 @@ export default {
         async fetchPostComments(postId) {
             try {
                 const response = await axios.get(`/posts/${postId}/comments`);
-                const post = this.posts.find(p => p.id === postId);
-                post.comments = response.data;
+                const post = this.posts.find((p) => p.id === postId);
+                if (post) post.comments = response.data;
             } catch (error) {
                 console.error("Error fetching comments:", error);
             }
@@ -94,7 +119,9 @@ export default {
         async addComment(postId) {
             if (!this.newCommentContent) return;
             try {
-                const response = await axios.post(`/posts/${postId}/comments`, { content: this.newCommentContent });
+                await axios.post(`/posts/${postId}/comments`, {
+                    content: this.newCommentContent
+                });
                 this.newCommentContent = "";
                 this.fetchPostComments(postId);
             } catch (error) {
@@ -105,7 +132,7 @@ export default {
     mounted() {
         this.checkLoginStatus();
     }
-}
+};
 </script>
 
 <style scoped>
@@ -116,7 +143,6 @@ export default {
     padding: 80px 30px 60px;
     color: black;
 }
-
 body.dark .welcome-text {
     color: white;
 }
@@ -130,9 +156,9 @@ body.dark .welcome-text {
 }
 
 .image-container {
-    position: relative;
     width: 30%;
     height: 600px;
+    position: relative;
 }
 
 .preview-img {

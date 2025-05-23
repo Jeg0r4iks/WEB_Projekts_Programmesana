@@ -11,6 +11,15 @@ class Comment extends Model
 
     protected $fillable = ['content', 'user_id', 'post_id'];
 
+    protected $appends = ['created_date'];
+
+    public function getCreatedDateAttribute()
+    {
+        return $this->created_at
+            ->timezone(config('app.timezone'))
+            ->format('Y-m-d H:i');
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class);

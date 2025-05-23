@@ -2,17 +2,15 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
-use App\Http\Controllers\{
-    PostController,
-    RegisterController,
-    LoginController,
-    CommentController,
-    ReactionController,
-    CategoryController
-};
+use App\Http\Controllers\PostController;
+use App\Http\Controllers\RegisterController;
+use App\Http\Controllers\LoginController;
+use App\Http\Controllers\CommentController;
+use App\Http\Controllers\ReactionController;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\Admin\PostController as AdminPostController;
 use Inertia\Inertia;
 
-// Страницы
 Route::get('/', fn() => Inertia::render('HomeView'))->name('home');
 Route::get('/about', fn() => Inertia::render('AboutView'))->name('about');
 Route::get('/history', fn() => Inertia::render('HistoryView'))->name('history');
@@ -21,20 +19,19 @@ Route::get('/style', fn() => Inertia::render('StyleView'))->name('style');
 Route::get('/login', fn() => Inertia::render('LoginView'))->name('login');
 Route::get('/profile', fn() => Inertia::render('ProfileView'));
 
-// Публичные запросы
 Route::get('/posts', [PostController::class, 'index']);
 Route::get('posts/{postId}/comments', [CommentController::class, 'index']);
 Route::get('posts/{postId}/reactions', [ReactionController::class, 'getReactions']);
 Route::get('/categories', [CategoryController::class, 'index']);
 
-// Аутентификация (всё в web middleware)
 Route::post('/register', [RegisterController::class, 'register']);
 Route::post('/login', [LoginController::class, 'login']);
 Route::post('/logout', [LoginController::class, 'logout']);
 
-// Защищённые маршруты
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/posts', [PostController::class, 'store']);
+    Route::get('/posts/{post}', [PostController::class, 'show']);
+    Route::put('/posts/{post}', [PostController::class, 'update']);
     Route::delete('/posts/{post}', [PostController::class, 'destroy']);
 
     Route::post('posts/{postId}/comments', [CommentController::class, 'store']);
@@ -56,3 +53,10 @@ Route::middleware('auth:sanctum')->group(function () {
         return response()->json(['message' => 'Profile updated successfully']);
     });
 });
+
+Route::middleware(['auth:sanctum','admin'])
+    ->prefix('admin')
+    ->group(function(){
+        Route::put('/posts/{post}', [AdminPostController::class, 'update']);
+        Route::delete('/posts/{post}', [AdminPostController::class, 'destroy']);
+    });
