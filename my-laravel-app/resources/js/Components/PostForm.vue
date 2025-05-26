@@ -1,6 +1,5 @@
 <template>
     <div class="post-form">
-        <!-- Filter Bar -->
         <div v-if="categories.length" class="filter-bar">
             <div class="search-box">
                 <input
@@ -31,7 +30,6 @@
             </div>
         </div>
 
-        <!-- Posts List -->
         <div class="post-container">
             <div v-if="posts.length">
                 <div v-for="post in posts" :key="post.id" class="post">
@@ -41,7 +39,6 @@
                         :src="post.image_url"
                         class="post-uploaded-image"
                     />
-
                     <div class="user_name">
                         <p><strong>Author: </strong>{{ post.user?.username || 'Unknown' }}</p>
                         <p>{{ post.created_date }}</p>
@@ -57,7 +54,6 @@
                         <span>{{ post.reactionCounts?.heart }}</span>
                     </div>
 
-                    <!-- Admin/Owner Actions -->
                     <button
                         v-if="(post.user && post.user.id === currentUserId) || isAdmin"
                         @click="deletePost(post.id)"
@@ -73,10 +69,8 @@
                         Edit Post
                     </button>
 
-                    <!-- Open Modal -->
                     <button @click="openModal(post)">Open Full Post</button>
 
-                    <!-- Inline Comments -->
                     <div v-if="post.id === selectedPost?.id">
                         <div v-for="comment in selectedPost.comments" :key="comment.id" class="comment">
                             <p><strong>{{ comment.user.username }}:</strong> {{ comment.content }}</p>
@@ -91,7 +85,6 @@
             </div>
         </div>
 
-        <!-- Create Post -->
         <div v-if="isLoggedIn" class="create-post-wrapper">
             <div class="create-post-container">
                 <h2 class="create-title">Write your own thoughts</h2>
@@ -119,7 +112,6 @@
         </div>
         <p v-else>Log in to add post</p>
 
-        <!-- Full Post Modal -->
         <div v-if="isModalOpen" class="modal" @click="closeModal">
             <div class="modal-content" @click.stop>
                 <h2>{{ selectedPost.user.username + ' post' }}</h2>
@@ -140,16 +132,17 @@
             </div>
         </div>
 
-        <!-- Edit Post Modal -->
         <div v-if="editingPost" class="edit-overlay">
             <div class="edit-container">
                 <h3>Edit Post</h3>
-                <input v-model="editingPost.title" placeholder="Заголовок" />
-                <textarea v-model="editingPost.content" placeholder="Содержимое"></textarea>
+                <input v-model="editingPost.title" placeholder="Title" />
+                <textarea v-model="editingPost.content" placeholder="Content"></textarea>
                 <label>Select Categories:</label>
                 <select v-model="editingPost.category_ids" multiple>
                     <option v-for="c in categories" :key="c.id" :value="c.id">{{ c.name }}</option>
                 </select>
+                <label>Change Photo:</label>
+                <input type="file" accept="image/*" @change="handleImageUpload" ref="fileInput" />
                 <button @click="updatePost">Save</button>
                 <button @click="cancelEdit">Cancel</button>
             </div>
@@ -159,6 +152,7 @@
 
 <script>
 import axios from 'axios';
+
 export default {
     name: 'PostForm',
     props: {
@@ -294,16 +288,20 @@ export default {
         },
         async updatePost() {
             try {
-                const payload = {
-                    title: this.editingPost.title,
-                    content: this.editingPost.content,
-                    category_ids: this.editingPost.category_ids
-                };
-                await axios.put(`/posts/${this.editingPost.id}`, payload);
-                this.editingPost = null;
-                this.fetchPosts();
+                const fd = new FormData()
+                fd.append('title', this.editingPost.title)
+                fd.append('content', this.editingPost.content)
+                this.editingPost.category_ids.forEach(id => fd.append('category_ids[]', id))
+                if (this.imageFile) {
+                    fd.append('image', this.imageFile)
+                }
+                await axios.post(`/posts/${this.editingPost.id}?_method=PUT`, fd, {
+                    headers: { 'Content-Type': 'multipart/form-data' }
+                })
+                this.cancelEdit()
+                this.fetchPosts()
             } catch (e) {
-                console.error(e);
+                console.error(e)
             }
         }
     },
@@ -315,6 +313,49 @@ export default {
 </script>
 
 <style scoped>
+.edit-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.edit-container {
+    background-color: #fff;
+    padding: 20px;
+    max-width: 600px;
+    width: 90%;
+    border-radius: 8px;
+}
+
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background-color: white;
+    padding: 20px;
+    max-width: 800px;
+    width: 100%;
+    border-radius: 8px;
+    overflow-y: auto;
+}
+
 h2 {
     text-align: center;
     font-family: "Perfectly Vintages";
