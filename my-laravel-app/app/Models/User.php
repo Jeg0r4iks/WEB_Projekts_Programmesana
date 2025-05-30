@@ -11,9 +11,17 @@ class User extends Authenticatable
     use HasApiTokens, Notifiable;
 
     protected $fillable = [
-        'username',
+        'name',
         'email',
         'password',
+        'username',
+        'bio',
+        'profile_photo',
+    ];
+
+    // вот это — чтобы profile_photo_url попал в JSON
+    protected $appends = [
+        'profile_photo_url',
     ];
 
     protected $hidden = [
@@ -25,4 +33,12 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    // возвращает полный URL к картинке профиля
+    public function getProfilePhotoUrlAttribute()
+    {
+        return $this->profile_photo
+            ? asset('storage/' . $this->profile_photo)
+            : asset('images/default-avatar.png');
+    }
 }

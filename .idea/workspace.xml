@@ -5,9 +5,20 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d52ee4fa-bf82-4f27-a061-9d7b8f5e195d" name="Changes" comment="Database migrations, posts are connected with users, registration and login cookies added.">
+      <change afterPath="$PROJECT_DIR$/my-laravel-app/tests/Feature/RegisterTest.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/my-laravel-app/app/Models/Post.php" beforeDir="false" afterPath="$PROJECT_DIR$/my-laravel-app/app/Models/Post.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/my-laravel-app/app/Http/Controllers/LoginController.php" beforeDir="false" afterPath="$PROJECT_DIR$/my-laravel-app/app/Http/Controllers/LoginController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/my-laravel-app/app/Http/Controllers/PostController.php" beforeDir="false" afterPath="$PROJECT_DIR$/my-laravel-app/app/Http/Controllers/PostController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/my-laravel-app/app/Http/Controllers/ProfileController.php" beforeDir="false" afterPath="$PROJECT_DIR$/my-laravel-app/app/Http/Controllers/ProfileController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/my-laravel-app/app/Models/User.php" beforeDir="false" afterPath="$PROJECT_DIR$/my-laravel-app/app/Models/User.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/my-laravel-app/database/migrations/2025_03_04_130002_create_info_table.php" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/my-laravel-app/resources/js/Components/PostForm.vue" beforeDir="false" afterPath="$PROJECT_DIR$/my-laravel-app/resources/js/Components/PostForm.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/my-laravel-app/resources/js/Pages/HistoryView.vue" beforeDir="false" afterPath="$PROJECT_DIR$/my-laravel-app/resources/js/Pages/HistoryView.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/my-laravel-app/resources/js/Pages/LoginView.vue" beforeDir="false" afterPath="$PROJECT_DIR$/my-laravel-app/resources/js/Pages/LoginView.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/my-laravel-app/resources/js/Pages/ProfileView.vue" beforeDir="false" afterPath="$PROJECT_DIR$/my-laravel-app/resources/js/Pages/ProfileView.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/my-laravel-app/routes/web.php" beforeDir="false" afterPath="$PROJECT_DIR$/my-laravel-app/routes/web.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/my-laravel-app/tests/Feature/ExampleTest.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/my-laravel-app/tests/Feature/ProfileTest.php" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -211,7 +222,14 @@
       <workItem from="1748115669763" duration="1763000" />
       <workItem from="1748190310228" duration="184000" />
       <workItem from="1748195533848" duration="3038000" />
-      <workItem from="1748267307561" duration="775000" />
+      <workItem from="1748267307561" duration="812000" />
+      <workItem from="1748272024837" duration="108000" />
+      <workItem from="1748272646230" duration="6420000" />
+      <workItem from="1748292635622" duration="3000" />
+      <workItem from="1748292867784" duration="27000" />
+      <workItem from="1748359825675" duration="7415000" />
+      <workItem from="1748603370725" duration="11833000" />
+      <workItem from="1748626883344" duration="7342000" />
     </task>
     <task id="LOCAL-00001" summary="Database migrations, posts are connected with users, registration and login cookies added.">
       <option name="closed" value="true" />
@@ -261,7 +279,15 @@
       <option name="project" value="LOCAL" />
       <updated>1748030610066</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="Database migrations, posts are connected with users, registration and login cookies added.">
+      <option name="closed" value="true" />
+      <created>1748271901711</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1748271901711</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

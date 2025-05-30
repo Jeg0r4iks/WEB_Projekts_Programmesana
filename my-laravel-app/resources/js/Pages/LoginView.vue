@@ -1,56 +1,122 @@
 <template>
-    <div class="login">
-        <h2>{{ isLogin ? 'Log In' : 'Create an account' }}</h2>
-        <form @submit.prevent="handleSubmit">
-            <div v-if="!isLogin" class="input-group">
-                <label for="username">Username</label>
-                <input v-model="username" type="text" id="username" />
-            </div>
-            <div class="input-group">
-                <label for="email">Email</label>
-                <input v-model="email" type="text" id="email" />
-            </div>
-            <div class="input-group">
-                <label for="password">Password</label>
-                <input v-model="password" type="password" id="password" />
-            </div>
-            <div v-if="!isLogin" class="input-group">
-                <label for="confirmPassword">Confirm Password</label>
-                <input v-model="confirmPassword" type="password" id="confirmPassword" />
-            </div>
-            <button type="submit">{{ isLogin ? 'Enter' : 'Registration' }}</button>
-        </form>
-        <p @click="toggleMode" class="toggle-text">
-            {{ isLogin ? 'Create an account' : 'Log In' }}
-        </p>
-        <transition name="fade">
-            <div v-if="visible" class="error-notification">
-                {{ message }}
-            </div>
-        </transition>
-        <button @click="goHome" class="home-button">Go to Home</button>
-    </div>
+    <div class="login-wrapper">
+        <div class="login">
+            <h2>{{ isLogin ? 'Log In' : 'Create an account' }}</h2>
+            <form @submit.prevent="handleSubmit">
+                <div v-if="!isLogin" class="input-group">
+                    <label for="username">Username</label>
+                    <input v-model="username" type="text" id="username" />
+                    <p v-if="usernameError" class="error-text">{{ usernameError }}</p>
+                </div>
 
+                <div class="input-group">
+                    <label for="email">Email</label>
+                    <input v-model="email" type="text" id="email" />
+                    <p v-if="emailError" class="error-text">{{ emailError }}</p>
+                </div>
+
+                <div class="input-group">
+                    <label for="password">Password</label>
+                    <input v-model="password" type="password" id="password" />
+                    <p v-if="passwordError" class="error-text">{{ passwordError }}</p>
+                </div>
+
+                <div v-if="!isLogin" class="input-group">
+                    <label for="confirmPassword">Confirm Password</label>
+                    <input v-model="confirmPassword" type="password" id="confirmPassword" />
+                    <p v-if="confirmPasswordError" class="error-text">{{ confirmPasswordError }}</p>
+                </div>
+
+                <button type="submit" :disabled="!formIsValid">
+                    {{ isLogin ? 'Enter' : 'Registration' }}
+                </button>
+            </form>
+
+            <p @click="toggleMode" class="toggle-text">
+                {{ isLogin ? 'Create an account' : 'Log In' }}
+            </p>
+
+            <transition name="fade">
+                <div v-if="visible" class="error-notification">
+                    {{ message }}
+                </div>
+            </transition>
+
+            <button @click="goHome" class="home-button">Go to Home</button>
+        </div>
+    </div>
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import axios from 'axios';
-import {router} from "@inertiajs/vue3";
+import { router } from '@inertiajs/vue3';
 
+// Regex rules
+const usernameRegex = /^[A-Za-z0-9_]{7,}$/;
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const passwordRegex = /^(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?])(?=.*\d).{8,}$/;
+
+// State
 const isLogin = ref(true);
+const username = ref('');
 const email = ref('');
 const password = ref('');
 const confirmPassword = ref('');
-const username = ref('');
 const visible = ref(false);
 const message = ref('');
 
+// Navigation
 const goHome = () => {
     router.visit('/');
 };
+
+// Toggle login/register mode
+const toggleMode = () => {
+    isLogin.value = !isLogin.value;
+    // Reset fields and messages
+    username.value = '';
+    email.value = '';
+    password.value = '';
+    confirmPassword.value = '';
+};
+
+// Real-time validation messages
+const usernameError = computed(() => {
+    if (isLogin.value) return '';
+    if (!username.value) return 'Username is required';
+    if (!usernameRegex.test(username.value)) return 'At least 7 characters, without special characters';
+    return '';
+});
+
+const emailError = computed(() => {
+    if (!email.value) return 'Email is required';
+    if (!emailRegex.test(email.value)) return 'Invalid email format';
+    return '';
+});
+
+const passwordError = computed(() => {
+    if (!password.value) return 'Password is required';
+    if (!passwordRegex.test(password.value)) return 'Minimum of 8 chars, including special character and number';
+    return '';
+});
+
+const confirmPasswordError = computed(() => {
+    if (isLogin.value) return '';
+    if (confirmPassword.value !== password.value) return 'Passwords do not match';
+    return '';
+});
+
+// Overall form validity
+const formIsValid = computed(() => {
+    const baseValid = !emailError.value && !passwordError.value;
+    if (isLogin.value) {
+        return baseValid;
+    }
+    return baseValid && !usernameError.value && !confirmPasswordError.value;
+});
+
+// Show error notification
 const showMessage = (msg) => {
     message.value = msg;
     visible.value = true;
@@ -59,34 +125,15 @@ const showMessage = (msg) => {
     }, 3000);
 };
 
-const toggleMode = () => {
-    isLogin.value = !isLogin.value;
-};
-
+// Form submission
 const handleSubmit = async () => {
-    if(!email.value || !password.value || (!isLogin.value && !confirmPassword.value)) {
-        showMessage('Please fill the fields');
+    if (!formIsValid.value) {
+        showMessage('Please correct the errors above');
         return;
-    }
-
-    if(!emailRegex.test(email.value)) {
-        showMessage('Email address is invalid');
-        return;
-    }
-
-    if(!isLogin.value) {
-        if(!passwordRegex.test(password.value)) {
-            showMessage('Password should have 8 characters, special character and number');
-            return;
-        }
-        if (password.value !== confirmPassword.value) {
-            showMessage('Passwords do not match');
-            return;
-        }
     }
 
     const formData = {
-        username: username.value,
+        ...(isLogin.value ? {} : { username: username.value }),
         email: email.value,
         password: password.value,
         ...(isLogin.value ? {} : { password_confirmation: confirmPassword.value }),
@@ -94,42 +141,37 @@ const handleSubmit = async () => {
 
     try {
         const endpoint = isLogin.value ? '/login' : '/register';
-
         await axios.get('/sanctum/csrf-cookie');
-
-        const response = await axios.post(endpoint, formData, {
-            withCredentials: true
-        });
-
+        await axios.post(endpoint, formData, { withCredentials: true });
         showMessage(isLogin.value ? 'Login successful' : 'Registration successful');
-
-        setTimeout(() => {
-            window.location.href = '/profile';
-        }, 1000);
-
-        console.log('Success:', response.data);
+        setTimeout(() => window.location.href = '/profile', 1000);
     } catch (error) {
-        if (error.response) {
-            if (error.response.status === 401) {
-                showMessage('Incorrect email or password');
-            } else if (error.response.data?.message) {
-                showMessage('An error occurred: ' + error.response.data.message);
-            } else {
-                showMessage('An error occurred');
-            }
-            console.error('Error:', error.response.data);
+        const res = error.response;
+        if (res && res.status === 401) {
+            showMessage('Incorrect email or password');
+        } else if (res?.data?.message) {
+            showMessage('Error: ' + res.data.message);
         } else {
-            console.error('Unexpected error:', error);
             showMessage('Unexpected error occurred');
         }
+        console.error(error);
     }
 };
-
 </script>
-
 <style scoped>
+.login-wrapper {
+    background-image: url('https://theplanetapp.com/wp-content/uploads/2022/08/fast-fashion-1-scaled-1-scaled.webp');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 .login {
-    max-width: 400px;
+    max-width: 600px;
+    width: 90vw;
     margin: 50px auto;
     padding: 20px;
     text-align: center;
@@ -160,7 +202,8 @@ label {
 
 input {
     width: calc(100% - 30px);
-    padding: 10px;
+    max-width: none;
+    padding: 12px;
     border: 1px solid #ccc;
     border-radius: 5px;
     margin-left: 15px;
@@ -169,7 +212,7 @@ input {
 
 button {
     width: 100%;
-    padding: 10px;
+    padding: 12px;
     border: none;
     background-color: black;
     color: white;
@@ -182,6 +225,7 @@ button {
 
 button:hover {
     background-color: rgb(244, 153, 153);
+    border-color: rgb(244, 153, 153);
 }
 
 .toggle-text {

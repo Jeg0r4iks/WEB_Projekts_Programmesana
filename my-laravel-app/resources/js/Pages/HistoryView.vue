@@ -2,35 +2,6 @@
     <div class="history">
         <navbar @toggle="closeSidebar"/>
         <h1>History of Fashion</h1>
-
-        <div class="content">
-            <span class="filters-button" @click="toggleSidebar">
-                Filters
-            </span>
-
-            <div class="sidebar" v-if="showSidebar">
-                <div v-if="showFilters" class="filter-container">
-                    <span class="close-filter" @click="closeSidebar">&times;</span>
-
-                    <input v-model="filter" type="text" placeholder="Search designers" class="search-box"/>
-                    <div class="designer-list">
-                        <button v-for="designer in filteredDesigners"
-                                :key="designer.id"
-                                class="designer-item"
-                                @click="selectDesigner(designer)">
-                            {{ designer.name }}
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="main-content">
-                <div v-if="selectedDesigner" class="designer-details">
-                    <h2>{{ selectedDesigner.name }}</h2>
-                    <p>{{ selectedDesigner.description }}</p>
-                </div>
-            </div>
-        </div>
         <post-form :hide-categories="true"/>
         <AppFooter/>
     </div>
@@ -42,47 +13,7 @@ import AppFooter from "@/Components/footer.vue";
 
 export default {
     name: 'HistoryView',
-    components: { navbar, AppFooter },
-    data() {
-        return {
-            designers: [
-                { id: 1, name: 'Coco Chanel', description: 'Founder of Chanel, known for timeless elegance.' },
-                { id: 2, name: 'Yves Saint Laurent', description: 'Revolutionized fashion with the tuxedo suit for women.' },
-                { id: 3, name: 'Gianni Versace', description: 'Bold colors and extravagant styles define Versace.' },
-                { id: 4, name: 'Karl Lagerfeld', description: 'Iconic designer behind Chanel and Fendi.' },
-                { id: 5, name: 'Vivienne Westwood', description: 'Punk and rebellious spirit in fashion.' },
-                { id: 6, name: 'Alexander McQueen', description: 'British fashion designer known for his unconventional designs.'},
-                { id: 7, name: 'Balenciaga', description: 'Spanish luxury fashion house founded by Cristóbal Balenciaga.' },
-                { id: 8, name: 'Comme des Garçons', description: 'Japanese fashion label founded by Rei Kawakubo.' },
-                { id: 9, name: 'Dsquared2', description: 'Canadian fashion label founded by twin brothers Dean and Dan Caten.'},
-                { id: 10, name: 'Rick Owens', description: ''},
-            ],
-            filter: '',
-            selectedDesigner: null,
-            showSidebar: false,
-            showFilters: false,
-        };
-    },
-    computed: {
-        filteredDesigners() {
-            return this.designers.filter((designer) =>
-                designer.name.toLowerCase().includes(this.filter.toLowerCase())
-            );
-        }
-    },
-    methods: {
-        selectDesigner(designer) {
-            this.selectedDesigner = designer;
-        },
-        toggleSidebar() {
-            this.showSidebar = !this.showSidebar;
-            this.showFilters = this.showSidebar;
-        },
-        closeSidebar() {
-            this.showSidebar = false;
-            this.showFilters = false;
-        }
-    },
+    components: { navbar, AppFooter }
 };
 </script>
 
