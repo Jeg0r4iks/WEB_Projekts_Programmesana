@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Post;
-use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -11,24 +10,22 @@ class PostController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Post::with(['user', 'categories', 'reactions']);
+        $query = Post::with(['user','categories','reactions']);
 
-        // берём массив выбранных category_ids[] из запроса
+        if ($request->filled('user_id')) {
+            $query->where('user_id', $request->user_id);
+        }
+
         $ids = $request->input('category_ids', []);
-
-        // если передали хотя бы одну, но не все категории — фильтруем “AND”
-        $totalCategories = Category::count();
+        $totalCategories = \App\Models\Category::count();
         if (is_array($ids) && count($ids) > 0 && count($ids) < $totalCategories) {
-            // для каждой выбранной категории добавляем whereHas
             foreach ($ids as $catId) {
                 $query->whereHas('categories', fn($q) =>
                 $q->where('categories.id', $catId)
                 );
             }
         }
-        // иначе (ids пустой или выбраны все) — фильтрации по категориям не делаем
 
-        // поиск по заголовку/контенту
         if ($request->filled('search')) {
             $query->where(fn($q) =>
             $q->where('title', 'like', "%{$request->search}%")
@@ -36,7 +33,6 @@ class PostController extends Controller
             );
         }
 
-        // сортировка по дате
         $posts = $query->latest()->get();
 
         return response()->json($posts);

@@ -2,7 +2,7 @@
     <div class="runway">
         <navbar/>
         <h1>Explore the runway</h1>
-        <post-form :hide-categories="true"/>
+        <post-form :hide-categories="true" filter-category-name="Runway" />
         <AppFooter/>
     </div>
 </template>

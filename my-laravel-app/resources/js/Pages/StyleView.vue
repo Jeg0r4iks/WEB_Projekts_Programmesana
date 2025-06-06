@@ -2,7 +2,7 @@
     <div class="style">
         <navbar />
         <h1>Find your style</h1>
-        <post-form :hide-categories="true"/>
+        <post-form :hide-categories="true" filter-category-name="Style" />
         <AppFooter />
     </div>
 </template>

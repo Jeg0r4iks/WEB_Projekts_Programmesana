@@ -2,7 +2,7 @@
     <div class="history">
         <navbar @toggle="closeSidebar"/>
         <h1>History of Fashion</h1>
-        <post-form :hide-categories="true"/>
+        <post-form :hide-categories="true" filter-category-name="History" />
         <AppFooter/>
     </div>
 </template>

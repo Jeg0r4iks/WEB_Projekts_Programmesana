@@ -140,10 +140,14 @@ async function fetchUser() {
 
 async function fetchStats() {
     if (!user.value.id) return;
+
     try {
-        // Fetch user's posts
-        const { data: posts } = await axios.get('/posts', { params: { user_id: user.value.id } });
+        const { data: posts } = await axios.get('/posts', {
+            params: { user_id: user.value.id }
+        });
+
         postCount.value = Array.isArray(posts) ? posts.length : 0;
+
         let likesSum = 0;
         for (const post of posts) {
             if (post.reactionCounts && typeof post.reactionCounts.like === 'number') {
