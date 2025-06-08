@@ -118,10 +118,10 @@
                                 </p>
                             </div>
                             <div v-if="isLoggedIn">
-                                <textarea
-                                    v-model="newCommentContent"
-                                    placeholder="Add a comment..."
-                                ></textarea>
+                <textarea
+                    v-model="newCommentContent"
+                    placeholder="Add a comment..."
+                ></textarea>
                                 <button @click="addComment(post.id)">Post Comment</button>
                             </div>
                             <p v-else>Log in to comment</p>
@@ -213,10 +213,10 @@
                         <p>No comments yet</p>
                     </div>
                     <div class="add-comment" v-if="isLoggedIn">
-                        <textarea
-                            v-model="newCommentContent"
-                            placeholder="Add a comment"
-                        ></textarea>
+            <textarea
+                v-model="newCommentContent"
+                placeholder="Add a comment"
+            ></textarea>
                         <button @click="addComment(selectedPost.id)">Send</button>
                     </div>
                     <p v-else class="login-note">Log in to add a comment</p>
@@ -303,21 +303,6 @@ export default {
             searchActive: false
         };
     },
-    watch: {
-        categories(newCats) {
-            if (this.filterCategoryName && newCats.length) {
-                const match = newCats.find(
-                    (c) => c.name.toLowerCase() === this.filterCategoryName.toLowerCase()
-                );
-                if (match) {
-                    this.selectedCategories = [match.id];
-                    this.fetchPosts();
-                } else {
-                    this.fetchPosts();
-                }
-            }
-        }
-    },
     methods: {
         highlight(text) {
             if (!this.searchActive || !this.searchQuery) return text;
@@ -329,9 +314,7 @@ export default {
             if (text.length <= 100) return text;
             let segment = text.slice(0, 100);
             const lastSpace = segment.lastIndexOf(" ");
-            if (lastSpace > 0) {
-                segment = segment.slice(0, lastSpace);
-            }
+            if (lastSpace > 0) segment = segment.slice(0, lastSpace);
             return segment + "...";
         },
         handleImageUpload(e) {
@@ -355,7 +338,7 @@ export default {
             });
             this.message = res.data.message;
             this.resetSearch();
-            this.fetchPosts();
+            await this.fetchPosts();
             this.post.title = "";
             this.post.content = "";
             this.post.category_ids = [];
@@ -371,17 +354,16 @@ export default {
                         params.push(`category_ids[]=${id}`)
                     );
                 }
-                if (this.sortBy === "date") {
-                    params.push("sort=date");
-                }
+                if (this.sortBy === "date") params.push("sort=date");
                 if (params.length) url += "?" + params.join("&");
                 const response = await axios.get(url);
                 let fetched = response.data;
+                // fetch reactions for each post
                 for (let post of fetched) {
-                    const reactionResponse = await axios.get(
+                    const reactionRes = await axios.get(
                         `/posts/${post.id}/reactions`
                     );
-                    post.reactionCounts = reactionResponse.data || {
+                    post.reactionCounts = reactionRes.data || {
                         like: 0,
                         dislike: 0,
                         heart: 0
@@ -389,37 +371,33 @@ export default {
                 }
                 if (this.sortBy === "reactions") {
                     fetched.sort((a, b) => {
-                        const sumA =
-                            (a.reactionCounts.like || 0) +
-                            (a.reactionCounts.dislike || 0) +
-                            (a.reactionCounts.heart || 0);
-                        const sumB =
-                            (b.reactionCounts.like || 0) +
-                            (b.reactionCounts.dislike || 0) +
-                            (b.reactionCounts.heart || 0);
-                        return sumB - sumA;
+                        const sum = (p) =>
+                            (p.reactionCounts.like || 0) +
+                            (p.reactionCounts.dislike || 0) +
+                            (p.reactionCounts.heart || 0);
+                        return sum(b) - sum(a);
                     });
                 }
                 if (this.searchActive && this.searchQuery.trim()) {
-                    const query = this.searchQuery.trim().toLowerCase();
-                    fetched = fetched.filter((post) => {
-                        const inTitle = post.title.toLowerCase().includes(query);
-                        const inContent = post.content.toLowerCase().includes(query);
-                        return inTitle || inContent;
-                    });
+                    const q = this.searchQuery.trim().toLowerCase();
+                    fetched = fetched.filter(
+                        (p) =>
+                            p.title.toLowerCase().includes(q) ||
+                            p.content.toLowerCase().includes(q)
+                    );
                 }
                 this.posts = fetched;
-            } catch (error) {
-                console.error(error);
+            } catch (e) {
+                console.error(e);
             }
         },
         async checkLoginStatus() {
             try {
-                const response = await axios.get("/user");
-                this.isLoggedIn = !!response.data;
+                const res = await axios.get("/user");
+                this.isLoggedIn = !!res.data;
                 if (this.isLoggedIn) {
-                    this.currentUserId = response.data.id;
-                    this.isAdmin = response.data.is_admin;
+                    this.currentUserId = res.data.id;
+                    this.isAdmin = res.data.is_admin;
                 }
             } catch {}
         },
@@ -427,7 +405,7 @@ export default {
             try {
                 await axios.delete(`/posts/${postId}`);
                 this.resetSearch();
-                this.fetchPosts();
+                await this.fetchPosts();
             } catch (e) {
                 console.error(e);
             }
@@ -465,7 +443,7 @@ export default {
             try {
                 await axios.post(`/posts/${postId}/reactions`, { type });
                 this.resetSearch();
-                this.fetchPosts();
+                await this.fetchPosts();
             } catch (e) {
                 console.error(e);
             }
@@ -508,7 +486,7 @@ export default {
                 );
                 this.cancelEdit();
                 this.resetSearch();
-                this.fetchPosts();
+                await this.fetchPosts();
             } catch (e) {
                 console.error(e);
             }
@@ -521,10 +499,21 @@ export default {
             this.searchActive = false;
         }
     },
-    mounted() {
-        this.checkLoginStatus();
-        this.fetchCategories();
-        this.fetchPosts();
+    async mounted() {
+        await this.checkLoginStatus();
+        await this.fetchCategories();
+
+        if (this.filterCategoryName) {
+            const name = this.filterCategoryName.toLowerCase();
+            const match = this.categories.find(
+                (c) => c.name.toLowerCase() === name
+            );
+            if (match) {
+                this.selectedCategories = [match.id];
+            }
+        }
+
+        await this.fetchPosts();
     }
 };
 </script>
@@ -544,7 +533,6 @@ export default {
     margin-bottom: 20px;
     flex-wrap: wrap;
 }
-
 .filter-left,
 .filter-center,
 .filter-right {
@@ -552,55 +540,58 @@ export default {
     display: flex;
     flex-direction: column;
 }
-
 .filter-left {
     justify-content: flex-start;
 }
-
 .filter-center {
     align-items: center;
 }
-
 .filter-right {
     align-items: flex-end;
 }
-
 .filter-item {
-    background-color: #fff;
+    background-color: var(--post-bg);
+    border: 1px solid var(--post-border);
     border-radius: 5px;
     padding: 12px;
-    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: none;
     display: flex;
     flex-direction: column;
+    color: var(--post-text);
+    transition: background-color 0.3s ease,
+    border-color 0.3s ease,
+    color 0.3s ease;
 }
 
 .search-box input {
     padding: 8px;
     border: none;
-    border-bottom: 2px solid #333;
-    background: transparent;
+    border-bottom: 2px solid var(--input-border);
+    background-color: var(--input-bg);
+    color: var(--post-text);
     font-size: 14px;
     width: 200px;
+    transition: background-color 0.3s ease,
+    border-color 0.3s ease,
+    color 0.3s ease;
 }
-
 .search-box input:focus {
     outline: none;
-    border-bottom-color: #555;
+    border-bottom-color: var(--input-border);
 }
-
 .search-btn {
     padding: 4px 8px;
     border: none;
-    background-color: #f6f6f6;
-    color: #333;
+    background-color: var(--input-bg);
+    color: var(--post-text);
     border-radius: 4px;
     font-size: 12px;
     cursor: pointer;
     margin-top: 8px;
+    transition: filter 0.2s ease;
 }
-
 .search-btn:hover {
-    background-color: #e0e0e0;
+    filter: brightness(1.1);
 }
 
 .category-box {
@@ -608,14 +599,12 @@ export default {
     flex-direction: column;
     align-items: flex-start;
 }
-
 .category-box > label {
     font-family: "Perfectly Vintages";
     font-size: 16px;
     margin-bottom: 6px;
-    color: #333;
+    color: var(--post-text);
 }
-
 .categories-checkboxes {
     display: flex;
     flex-wrap: wrap;
@@ -623,7 +612,6 @@ export default {
     font-family: "Perfectly Vintages";
     font-size: 14px;
 }
-
 .checkbox-item {
     display: flex;
     align-items: center;
@@ -631,23 +619,19 @@ export default {
     padding: 2px;
     background-color: transparent;
 }
-
 .category-checkbox {
     width: 16px;
     height: 16px;
     cursor: pointer;
-    flex-shrink: 0;
 }
-
 .category-label {
-    color: #555;
+    color: var(--post-text);
     font-size: 14px;
 }
-
 .found-count {
     margin-top: 8px;
     font-size: 14px;
-    color: #333;
+    color: var(--post-text);
 }
 
 .sort-box {
@@ -655,26 +639,27 @@ export default {
     flex-direction: column;
     align-items: flex-end;
 }
-
 .sort-box label {
     font-size: 14px;
     margin-bottom: 4px;
-    color: #333;
+    color: var(--post-text);
 }
-
 .sort-box select {
     padding: 6px;
     border: none;
-    border-bottom: 2px solid #333;
-    background-color: #f6f6f6;
+    border-bottom: 2px solid var(--input-border);
+    background-color: var(--input-bg);
+    color: var(--post-text);
     font-size: 14px;
     border-radius: 4px;
     width: 150px;
+    transition: background-color 0.3s ease,
+    border-color 0.3s ease,
+    color 0.3s ease;
 }
-
 .sort-box select:focus {
     outline: none;
-    border-bottom-color: #555;
+    border-bottom-color: var(--input-border);
 }
 
 .post-container {
@@ -682,20 +667,17 @@ export default {
     margin: 0 auto;
     box-sizing: border-box;
 }
-
 .post-row {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 20px;
     justify-content: center;
 }
-
 @media (max-width: 960px) {
     .post-row {
         grid-template-columns: repeat(2, 1fr);
     }
 }
-
 @media (max-width: 600px) {
     .post-row {
         grid-template-columns: 1fr;
@@ -704,28 +686,31 @@ export default {
 
 .post {
     padding: 16px;
-    background-color: #fff;
+    background-color: var(--post-bg);
+    border: 1px solid var(--post-border);
     border-radius: 5px;
     box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
     font-size: 14px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    color: var(--post-text);
+    transition: background-color 0.3s ease,
+    border-color 0.3s ease,
+    color 0.3s ease;
 }
-
 .post h3 {
     font-family: "Akira Expanded";
     font-size: 18px;
     margin-bottom: 8px;
     line-height: 1.2;
+    color: var(--post-text);
 }
-
 .post h4 {
     font-size: 12px;
-    color: #555;
     margin-bottom: 8px;
+    color: var(--post-text);
 }
-
 .post-uploaded-image {
     width: 100%;
     max-height: 180px;
@@ -733,41 +718,37 @@ export default {
     margin: 8px 0;
     border-radius: 4px;
 }
-
 .user-name {
     display: flex;
-    justify-content: space-between;
     align-items: center;
     margin-bottom: 8px;
+    gap: 12px;
 }
-
 .author-info {
     display: flex;
     align-items: center;
     gap: 6px;
 }
-
 .profile-photo-post {
     width: 28px;
     height: 28px;
     border-radius: 50%;
     object-fit: cover;
 }
-
 .author-text {
     font-size: 12px;
+    color: var(--post-text);
 }
-
 .post-date {
     font-size: 11px;
-    color: #777;
+    color: var(--post-text);
 }
-
 .post p {
     font-size: 13px;
     line-height: 1.4;
     margin: 8px 0;
     flex-grow: 1;
+    color: var(--post-text);
 }
 
 .reaction-icons {
@@ -775,21 +756,19 @@ export default {
     gap: 8px;
     margin: 8px 0;
 }
-
 .reaction-icons button {
     background: none;
     border: none;
     font-size: 1.2rem;
     cursor: pointer;
+    color: var(--post-text);
 }
-
 .post-buttons {
     display: flex;
     gap: 8px;
     flex-wrap: wrap;
     margin-top: 8px;
 }
-
 .btn-delete {
     background-color: transparent;
     border: 1px solid #e74c3c;
@@ -799,11 +778,9 @@ export default {
     font-size: 12px;
     cursor: pointer;
 }
-
 .btn-delete:hover {
     background-color: rgba(231, 76, 60, 0.1);
 }
-
 .btn-edit {
     background-color: transparent;
     border: 1px solid #3498db;
@@ -813,11 +790,9 @@ export default {
     font-size: 12px;
     cursor: pointer;
 }
-
 .btn-edit:hover {
     background-color: rgba(52, 152, 219, 0.1);
 }
-
 .open-post-btn {
     background-color: #333;
     color: #fff;
@@ -828,7 +803,6 @@ export default {
     cursor: pointer;
     transition: background-color 0.2s;
 }
-
 .open-post-btn:hover {
     background-color: #555;
 }
@@ -845,9 +819,9 @@ export default {
     align-items: center;
     z-index: 1000;
 }
-
 .modal-content.full-post-container {
-    background-color: #fff;
+    background-color: var(--post-bg);
+    color: var(--post-text);
     width: 100vw;
     height: 100vh;
     display: flex;
@@ -858,26 +832,23 @@ export default {
     padding: 0;
     box-sizing: border-box;
 }
-
 .post-full {
     flex: 2;
     padding: 20px;
     overflow-y: auto;
     box-sizing: border-box;
 }
-
 .post-full-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 20px;
 }
-
 .post-full-header h2 {
     font-size: 24px;
     margin: 0;
+    color: var(--post-text);
 }
-
 .close-btn {
     background: none;
     border: none;
@@ -885,122 +856,116 @@ export default {
     line-height: 1;
     cursor: pointer;
     padding: 0;
-    color: #333;
+    color: var(--post-text);
 }
-
 .post-full h3 {
     font-size: 20px;
     margin-bottom: 12px;
+    color: var(--post-text);
 }
-
 .post-full-image-wrapper {
     width: 100%;
-    margin-bottom: 12px;
+    max-height: none;
 }
-
 .post-full-image {
     width: 100%;
-    max-height: 400px;
-    object-fit: cover;
-    border-radius: 0;
+    height: auto;
+    object-fit: contain;
+    filter: none;
 }
-
 .post-full-content {
     font-size: 16px;
     line-height: 1.5;
     white-space: pre-wrap;
     margin-top: 12px;
+    color: var(--post-text);
 }
 
 .comments-sidebar {
     flex: 1;
-    border-left: 1px solid #ddd;
-    background-color: #fafafa;
+    border-left: 1px solid var(--post-border);
+    background-color: var(--post-bg);
+    color: var(--post-text);
     padding: 20px;
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
     overflow-y: auto;
 }
-
 .comments-sidebar h3 {
     font-size: 18px;
     margin-bottom: 12px;
     text-align: center;
+    color: var(--post-text);
 }
-
 .comments-list {
     flex: 1;
     overflow-y: auto;
 }
-
 .comment-item {
     margin-bottom: 12px;
 }
-
 .comment-header {
     display: flex;
     justify-content: space-between;
     align-items: baseline;
     margin-bottom: 6px;
 }
-
 .comment-header strong {
     font-size: 14px;
+    color: var(--post-text);
 }
-
 .comment-date {
     font-size: 12px;
-    color: #666;
+    color: var(--post-text);
 }
-
 .comment-content {
     font-size: 13px;
     line-height: 1.4;
     margin: 0;
+    color: var(--post-text);
 }
-
 .no-comments {
     font-size: 13px;
-    color: #666;
+    color: var(--post-text);
     text-align: center;
     margin-top: 20px;
 }
-
 .add-comment {
     margin-top: 20px;
 }
-
 .add-comment textarea {
     width: 100%;
     height: 80px;
     resize: vertical;
     padding: 8px;
-    border: 1px solid #ccc;
+    background-color: var(--input-bg);
+    color: var(--post-text);
+    border: 1px solid var(--input-border);
     border-radius: 4px;
     font-size: 13px;
+    transition: background-color 0.3s ease,
+    border-color 0.3s ease,
+    color 0.3s ease;
 }
-
 .add-comment button {
     margin-top: 10px;
     width: 100%;
     padding: 8px;
-    background-color: #333;
-    color: #fff;
+    background-color: var(--input-bg);
+    color: var(--post-text);
     border: none;
     border-radius: 4px;
     font-size: 14px;
     cursor: pointer;
-    transition: background-color 0.2s;
+    transition: filter 0.2s ease;
 }
-
 .add-comment button:hover {
-    background-color: #555;
+    filter: brightness(1.1);
 }
-
 .login-note {
     font-size: 13px;
-    color: #666;
+    color: var(--post-text);
     margin-top: 20px;
     text-align: center;
 }
@@ -1016,47 +981,47 @@ export default {
     box-shadow: none;
     border-radius: 8px;
 }
-
 .create-post-container {
     font-family: "Perfectly Vintages";
 }
-
 .create-post-container input,
 .create-post-container textarea {
     width: 100%;
     padding: 8px;
     margin-top: 5px;
-    border: 1px solid #ccc;
+    border: 1px solid var(--input-border);
     border-radius: 4px;
     font-size: 14px;
     font-family: "Perfectly Vintages";
+    background-color: var(--input-bg);
+    color: var(--post-text);
+    transition: background-color 0.3s ease,
+    border-color 0.3s ease,
+    color 0.3s ease;
 }
-
 .create-post-container button {
     width: 100%;
     padding: 12px;
     border: none;
-    background-color: #333;
-    color: #fff;
+    background-color: var(--input-bg);
+    color: var(--post-text);
     border-radius: 5px;
     margin-top: 20px;
     cursor: pointer;
     font-size: 16px;
     font-family: "Perfectly Vintages";
-    transition: background-color 0.2s;
+    transition: filter 0.2s ease;
 }
-
 .create-post-container button:hover {
-    background-color: #555;
+    filter: brightness(1.1);
 }
-
 .create-post-container h2 {
     font-family: "Perfectly Vintages";
     font-size: 35px;
     text-align: center;
     margin-bottom: 20px;
+    color: var(--post-text);
 }
-
 .success-message {
     color: green;
     margin-top: 10px;
@@ -1068,14 +1033,12 @@ export default {
     padding: 0 !important;
     margin-bottom: 12px;
 }
-
 .create-category-box > label {
     font-family: "Perfectly Vintages";
     font-size: 16px;
     margin-bottom: 4px;
-    color: #333;
+    color: var(--post-text);
 }
-
 .create-categories-checkboxes {
     display: flex;
     flex-wrap: wrap;
@@ -1083,7 +1046,6 @@ export default {
     font-family: "Perfectly Vintages";
     font-size: 14px;
 }
-
 .create-categories-checkboxes .checkbox-item {
     display: flex;
     align-items: center;
@@ -1091,7 +1053,6 @@ export default {
     padding: 2px;
     background-color: transparent;
 }
-
 .create-categories-checkboxes .category-checkbox {
     width: 16px;
     height: 16px;
@@ -1099,9 +1060,8 @@ export default {
     flex-shrink: 0;
     margin-right: 2px;
 }
-
 .create-categories-checkboxes .category-label {
-    color: #555;
+    color: var(--post-text);
     font-size: 14px;
     margin-left: 0;
     white-space: nowrap;
@@ -1113,74 +1073,64 @@ export default {
     box-sizing: border-box;
     overflow-y: auto;
 }
-
 .edit-form-col h3 {
     margin-bottom: 12px;
+    color: var(--post-text);
 }
-
 .edit-form-col label {
     display: block;
     font-weight: bold;
     margin-top: 10px;
     font-size: 14px;
+    color: var(--post-text);
 }
-
 .edit-form-col input,
 .edit-form-col textarea {
     width: 100%;
     padding: 8px;
     margin-top: 5px;
-    border: 1px solid #ccc;
+    border: 1px solid var(--input-border);
     border-radius: 4px;
     font-size: 14px;
     font-family: "Perfectly Vintages";
+    background-color: var(--input-bg);
+    color: var(--post-text);
+    transition: background-color 0.3s ease,
+    border-color 0.3s ease,
+    color 0.3s ease;
 }
-
 .buttons-row {
     display: flex;
     gap: 10px;
     margin-top: 20px;
 }
-
 .buttons-row button {
     flex: 1;
     padding: 10px;
     border: none;
-    background-color: #333;
-    color: #fff;
+    background-color: var(--input-bg);
+    color: var(--post-text);
     border-radius: 4px;
     cursor: pointer;
     font-size: 14px;
     font-family: "Perfectly Vintages";
-    transition: background-color 0.2s;
+    transition: filter 0.2s ease;
 }
-
 .buttons-row button:hover {
-    background-color: #555;
+    filter: brightness(1.1);
 }
-
 .edit-preview-col {
     flex: 1;
-    background-color: #f9f9f9;
+    background-color: var(--input-bg);
     padding: 20px;
     box-sizing: border-box;
     overflow-y: auto;
 }
-
-.edit-preview-col h3 {
-    margin-bottom: 12px;
-    font-family: "Perfectly Vintages";
-}
-
-.edit-preview-col h4 {
-    margin-bottom: 8px;
-    font-family: "Perfectly Vintages";
-}
-
+.edit-preview-col h3,
+.edit-preview-col h4,
 .edit-preview-col p {
+    color: var(--post-text);
     margin-bottom: 12px;
-    font-size: 14px;
-    line-height: 1.4;
     font-family: "Perfectly Vintages";
 }
 </style>

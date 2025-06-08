@@ -81,11 +81,9 @@ import { ref, computed, onMounted } from 'vue';
 import axios from 'axios';
 import { router } from '@inertiajs/vue3';
 
-// Regex rules
 const usernameRegex = /^[A-Za-z0-9_]{7,}$/;
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-// State
 const user = ref({ id: null, username: '', email: '', bio: '', profile_photo_url: '' });
 const form = ref({ username: '', email: '', bio: '' });
 const isEditing = ref(false);
@@ -96,7 +94,6 @@ const visible = ref(false);
 const postCount = ref(0);
 const totalLikes = ref(0);
 
-// Validation
 const usernameError = computed(() => {
     if (!isEditing.value) return '';
     if (!form.value.username) return 'Username is required';
@@ -205,7 +202,6 @@ async function saveProfile() {
         isEditing.value = false;
         preview.value = null;
         file.value = null;
-        // refresh stats after save
         await fetchStats();
     } catch (e) {
         console.error('Error saving profile:', e);
@@ -230,16 +226,22 @@ onMounted(async () => {
     margin: 50px auto;
     padding: 20px;
     text-align: center;
-    background-color: #fff;
+    background-color: var(--post-bg);
+    border: 1px solid var(--post-border);
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     font-family: sans-serif;
+    color: var(--post-text);
+    transition: background-color 0.3s ease,
+    border-color 0.3s ease,
+    color 0.3s ease;
 }
 
 .profile h1 {
     font-family: "Perfectly Vintages";
     font-size: 40px;
     margin-bottom: 20px;
+    color: var(--post-text);
 }
 
 .avatar {
@@ -253,16 +255,14 @@ onMounted(async () => {
     height: 120px;
     object-fit: cover;
     border-radius: 50%;
-    background-color: #fff;
-}
-
-label {
-    font-family: "Perfectly Vintages";
-    font-size: 25px;
+    background-color: var(--post-bg);
+    border: 1px solid var(--post-border);
+    transition: background-color 0.3s ease,
+    border-color 0.3s ease;
 }
 
 .profile-info {
-    font-size: 25px;
+    font-size: 18px;
     text-align: left;
     margin-bottom: 20px;
 }
@@ -274,25 +274,91 @@ label {
 .info-item label {
     font-weight: bold;
     margin-right: 10px;
+    color: var(--post-text);
+}
+
+button {
+    width: 30%;
+    margin: 20px 10px 0 0;
+    padding: 12px;
+    background-color: var(--input-bg);
+    color: var(--post-text);
+    border: 1px solid var(--input-border);
+    border-radius: 5px;
+    cursor: pointer;
+    font-family: 'Perfectly Vintages';
+    font-size: 20px;
+    transition: background-color 0.3s ease,
+    border-color 0.3s ease,
+    color 0.3s ease,
+    filter 0.2s ease;
+}
+
+button:hover {
+    filter: brightness(1.1);
+}
+
+.error-text {
+    color: #e74c3c;
+    font-size: 14px;
+    margin-top: 4px;
+}
+
+.error-notification {
+    margin-top: 20px;
+    padding: 10px;
+    background-color: var(--input-bg);
+    color: var(--post-text);
+    border: 1px solid var(--input-border);
+    border-radius: 4px;
+    transition: background-color 0.3s ease,
+    border-color 0.3s ease,
+    color 0.3s ease;
+}
+
+.edit-form {
+    background-color: var(--post-bg);
+    border: 1px solid var(--post-border);
+    border-radius: 8px;
+    padding: 20px;
+    margin-top: 20px;
+    text-align: left;
+    color: var(--post-text);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    transition: background-color 0.3s ease,
+    border-color 0.3s ease,
+    color 0.3s ease;
+}
+
+.edit-form h2 {
+    font-family: "Perfectly Vintages";
+    font-size: 28px;
+    margin-bottom: 15px;
+    color: var(--post-text);
 }
 
 .input-group {
     margin-bottom: 15px;
-    text-align: left;
 }
 
 .input-group label {
     display: block;
     margin-bottom: 5px;
     font-weight: bold;
+    color: var(--post-text);
 }
 
 .input-group input,
 .input-group textarea {
     width: 100%;
     padding: 8px;
-    border: 1px solid #ccc;
+    background-color: var(--input-bg);
+    color: var(--post-text);
+    border: 1px solid var(--input-border);
     border-radius: 4px;
+    transition: background-color 0.3s ease,
+    border-color 0.3s ease,
+    color 0.3s ease;
 }
 
 .preview-img {
@@ -301,34 +367,16 @@ label {
     border-radius: 4px;
     display: block;
     margin-top: 5px;
+    border: 1px solid var(--post-border);
+    background-color: var(--post-bg);
+    transition: background-color 0.3s ease,
+    border-color 0.3s ease;
 }
 
-button {
-    width: 30%;
-    margin: 20px 10px 0 0;
-    padding: 12px;
-    border: none;
-    background-color: black;
-    color: white;
-    border-radius: 5px;
-    margin-top: 20px;
-    cursor: pointer;
-    font-family: 'Perfectly Vintages';
-    font-size: 20px;
+.edit-form button {
+    width: auto;
+    margin: 10px 10px 0 0;
+    padding: 10px 20px;
 }
 
-button:hover {
-    background-color: rgb(244, 153, 153);
-    border-color: rgb(244, 153, 153);
-}
-
-.fade-enter-active,
-.fade-leave-active {
-    transition: opacity 0.5s;
-}
-
-.fade-enter-from,
-.fade-leave-to {
-    opacity: 0;
-}
 </style>

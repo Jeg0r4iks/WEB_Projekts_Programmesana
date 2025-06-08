@@ -10,7 +10,6 @@
 
         <div class="right">
             <a href="/style" class="desktop-only">Style</a>
-            <a href="/about" class="desktop-only">About</a>
             <i :class="isDarkMode ? 'fas fa-sun' : 'fas fa-moon'" @click="toggleDarkMode"></i>
             <a @click.prevent="goToProfile">
                 <i class="fas fa-user"></i>
@@ -22,7 +21,6 @@
             <a href="/history">History</a>
             <a href="/runway">Runway</a>
             <a href="/style">Style</a>
-            <a href="/about">About</a>
         </div>
     </nav>
 </template>
@@ -204,7 +202,6 @@ body.dark nav .fa-bars {
 
 body.dark nav .fa-sun:hover,
 body.dark nav .fa-moon:hover,
-body.dark nav .fa-search:hover,
 body.dark nav .fa-bars:hover {
     color: rgb(255, 0, 0);
 }

@@ -19,12 +19,10 @@ class LoginController extends Controller
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
 
-            // Записываем время входа
             $user = Auth::user();
             $user->last_login_at = now();
             $user->save();
 
-            // Обновляем модель, чтобы включить новое значение
             $user->refresh();
 
             return response()->json([

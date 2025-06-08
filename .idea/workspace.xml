@@ -6,13 +6,23 @@
   <component name="ChangeListManager">
     <list default="true" id="d52ee4fa-bf82-4f27-a061-9d7b8f5e195d" name="Changes" comment="Profile page changed, more information in posts, notification for incorrect data formats.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/my-laravel-app/app/Http/Controllers/PostController.php" beforeDir="false" afterPath="$PROJECT_DIR$/my-laravel-app/app/Http/Controllers/PostController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/my-laravel-app/app/Http/Controllers/LoginController.php" beforeDir="false" afterPath="$PROJECT_DIR$/my-laravel-app/app/Http/Controllers/LoginController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/my-laravel-app/app/Models/Info.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/my-laravel-app/app/Models/User.php" beforeDir="false" afterPath="$PROJECT_DIR$/my-laravel-app/app/Models/User.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/my-laravel-app/app/Providers/AppServiceProvider.php" beforeDir="false" afterPath="$PROJECT_DIR$/my-laravel-app/app/Providers/AppServiceProvider.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/my-laravel-app/database/seeders/InfoSeeder.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/my-laravel-app/resources/css/app.css" beforeDir="false" afterPath="$PROJECT_DIR$/my-laravel-app/resources/css/app.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/my-laravel-app/resources/js/Components/PostForm.vue" beforeDir="false" afterPath="$PROJECT_DIR$/my-laravel-app/resources/js/Components/PostForm.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/my-laravel-app/resources/js/Components/footer.vue" beforeDir="false" afterPath="$PROJECT_DIR$/my-laravel-app/resources/js/Components/footer.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/my-laravel-app/resources/js/Components/navbar.vue" beforeDir="false" afterPath="$PROJECT_DIR$/my-laravel-app/resources/js/Components/navbar.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/my-laravel-app/resources/js/Pages/AboutView.vue" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/my-laravel-app/resources/js/Pages/HistoryView.vue" beforeDir="false" afterPath="$PROJECT_DIR$/my-laravel-app/resources/js/Pages/HistoryView.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/my-laravel-app/resources/js/Pages/HomeView.vue" beforeDir="false" afterPath="$PROJECT_DIR$/my-laravel-app/resources/js/Pages/HomeView.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/my-laravel-app/resources/js/Pages/LoginView.vue" beforeDir="false" afterPath="$PROJECT_DIR$/my-laravel-app/resources/js/Pages/LoginView.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/my-laravel-app/resources/js/Pages/ProfileView.vue" beforeDir="false" afterPath="$PROJECT_DIR$/my-laravel-app/resources/js/Pages/ProfileView.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/my-laravel-app/resources/js/Pages/RunwayView.vue" beforeDir="false" afterPath="$PROJECT_DIR$/my-laravel-app/resources/js/Pages/RunwayView.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/my-laravel-app/resources/js/Pages/StyleView.vue" beforeDir="false" afterPath="$PROJECT_DIR$/my-laravel-app/resources/js/Pages/StyleView.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/my-laravel-app/resources/views/app.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/my-laravel-app/resources/views/app.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/my-laravel-app/routes/web.php" beforeDir="false" afterPath="$PROJECT_DIR$/my-laravel-app/routes/web.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -231,7 +241,8 @@
       <workItem from="1749042686079" duration="1254000" />
       <workItem from="1749104467663" duration="1251000" />
       <workItem from="1749132145792" duration="2165000" />
-      <workItem from="1749213158703" duration="14421000" />
+      <workItem from="1749213158703" duration="14437000" />
+      <workItem from="1749403441982" duration="11086000" />
     </task>
     <task id="LOCAL-00001" summary="Database migrations, posts are connected with users, registration and login cookies added.">
       <option name="closed" value="true" />
@@ -297,7 +308,15 @@
       <option name="project" value="LOCAL" />
       <updated>1748639777329</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="Profile page changed, more information in posts, notification for incorrect data formats.">
+      <option name="closed" value="true" />
+      <created>1749241875210</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1749241875210</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

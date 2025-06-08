@@ -52,12 +52,10 @@ import { ref, computed } from 'vue';
 import axios from 'axios';
 import { router } from '@inertiajs/vue3';
 
-// Regex rules
 const usernameRegex = /^[A-Za-z0-9_]{7,}$/;
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const passwordRegex = /^(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?])(?=.*\d).{8,}$/;
 
-// State
 const isLogin = ref(true);
 const username = ref('');
 const email = ref('');
@@ -66,22 +64,18 @@ const confirmPassword = ref('');
 const visible = ref(false);
 const message = ref('');
 
-// Navigation
 const goHome = () => {
     router.visit('/');
 };
 
-// Toggle login/register mode
 const toggleMode = () => {
     isLogin.value = !isLogin.value;
-    // Reset fields and messages
     username.value = '';
     email.value = '';
     password.value = '';
     confirmPassword.value = '';
 };
 
-// Real-time validation messages
 const usernameError = computed(() => {
     if (isLogin.value) return '';
     if (!username.value) return 'Username is required';
@@ -107,7 +101,6 @@ const confirmPasswordError = computed(() => {
     return '';
 });
 
-// Overall form validity
 const formIsValid = computed(() => {
     const baseValid = !emailError.value && !passwordError.value;
     if (isLogin.value) {
@@ -116,7 +109,6 @@ const formIsValid = computed(() => {
     return baseValid && !usernameError.value && !confirmPasswordError.value;
 });
 
-// Show error notification
 const showMessage = (msg) => {
     message.value = msg;
     visible.value = true;
@@ -125,7 +117,6 @@ const showMessage = (msg) => {
     }, 3000);
 };
 
-// Form submission
 const handleSubmit = async () => {
     if (!formIsValid.value) {
         showMessage('Please correct the errors above');
@@ -169,15 +160,21 @@ const handleSubmit = async () => {
     justify-content: center;
     align-items: center;
 }
+
 .login {
     max-width: 600px;
     width: 90vw;
     margin: 50px auto;
     padding: 20px;
     text-align: center;
+    background-color: var(--post-bg);
+    border: 1px solid var(--post-border);
     border-radius: 10px;
-    box-shadow: rgb(244, 153, 153) 1px 1px 10px;
-    background-color: whitesmoke;
+    box-shadow: rgba(0, 0, 0, 0.1) 1px 1px 10px;
+    color: var(--post-text);
+    transition: background-color 0.3s ease,
+    border-color 0.3s ease,
+    color 0.3s ease;
 }
 
 h2 {
@@ -185,6 +182,7 @@ h2 {
     font-size: 40px;
     font-weight: normal;
     margin-bottom: 30px;
+    color: var(--post-text);
 }
 
 .input-group {
@@ -198,42 +196,62 @@ label {
     font-size: 20px;
     margin-bottom: 10px;
     margin-left: 15px;
+    color: var(--post-text);
 }
 
 input {
     width: calc(100% - 30px);
-    max-width: none;
     padding: 12px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
     margin-left: 15px;
     font-size: 16px;
+    border: 1px solid var(--input-border);
+    border-radius: 5px;
+    background-color: var(--input-bg);
+    color: var(--post-text);
+    transition: background-color 0.3s ease,
+    border-color 0.3s ease,
+    color 0.3s ease;
 }
 
-button {
+input:focus {
+    outline: none;
+    border-color: var(--input-border);
+}
+
+button[type="submit"] {
     width: 100%;
     padding: 12px;
-    border: none;
-    background-color: black;
-    color: white;
-    border-radius: 5px;
     margin-top: 20px;
+    background-color: var(--input-bg);
+    color: var(--post-text);
+    border: 1px solid var(--input-border);
+    border-radius: 5px;
     cursor: pointer;
     font-family: 'Perfectly Vintages';
     font-size: 20px;
+    transition: filter 0.2s ease,
+    background-color 0.3s ease,
+    border-color 0.3s ease,
+    color 0.3s ease;
 }
 
-button:hover {
-    background-color: rgb(244, 153, 153);
-    border-color: rgb(244, 153, 153);
+button[type="submit"]:hover:not(:disabled) {
+    filter: brightness(1.1);
+}
+
+button[type="submit"]:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
 }
 
 .toggle-text {
-    color: black;
-    cursor: pointer;
-    font-family: 'Perfectly Vintages';
+    display: block;
     margin-top: 20px;
+    font-family: 'Perfectly Vintages';
     font-size: 20px;
+    color: var(--post-text);
+    cursor: pointer;
+    transition: text-decoration 0.2s;
 }
 
 .toggle-text:hover {
@@ -258,14 +276,28 @@ button:hover {
     position: fixed;
     top: 10px;
     left: 20px;
-    padding: 10px 10px;
-    border: 1px solid black;
+    padding: 10px 15px;
+    background-color: var(--input-bg);
+    color: var(--post-text);
+    border: 1px solid var(--input-border);
     border-radius: 5px;
     cursor: pointer;
     font-family: 'Perfectly Vintages';
     font-size: 20px;
+    transition: filter 0.2s ease,
+    background-color 0.3s ease,
+    border-color 0.3s ease,
+    color 0.3s ease;
     z-index: 1000;
-    width: auto;
-    height: auto;
+}
+
+.home-button:hover {
+    filter: brightness(1.1);
+}
+
+.error-text {
+    margin-left: 15px;
+    color: #e74c3c;
+    font-size: 14px;
 }
 </style>

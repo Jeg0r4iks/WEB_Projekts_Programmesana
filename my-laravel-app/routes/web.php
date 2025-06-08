@@ -9,11 +9,9 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\ReactionController;
 use App\Http\Controllers\CategoryController;
-use App\Http\Controllers\Admin\PostController as AdminPostController;
 use Inertia\Inertia;
 
 Route::get('/', fn() => Inertia::render('HomeView'))->name('home');
-Route::get('/about', fn() => Inertia::render('AboutView'))->name('about');
 Route::get('/history', fn() => Inertia::render('HistoryView'))->name('history');
 Route::get('/runway', fn() => Inertia::render('RunwayView'))->name('runway');
 Route::get('/style', fn() => Inertia::render('StyleView'))->name('style');
@@ -38,10 +36,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/posts/{postId}/comments', [CommentController::class, 'store']);
     Route::post('/posts/{postId}/reactions', [ReactionController::class, 'store']);
 
-    // Return the authenticated user as JSON
     Route::get('/user', fn(Request $request) => $request->user());
 
-    // Update profile: username, email, bio, and profile_photo
     Route::post('/update-profile', function (Request $request) {
         $data = $request->validate([
             'username'      => 'required|string|max:255',
@@ -77,10 +73,3 @@ Route::middleware('auth:sanctum')->group(function () {
         ]);
     });
 });
-
-Route::middleware(['auth:sanctum', 'admin'])
-    ->prefix('admin')
-    ->group(function () {
-        Route::put('/posts/{post}', [AdminPostController::class, 'update']);
-        Route::delete('/posts/{post}', [AdminPostController::class, 'destroy']);
-    });

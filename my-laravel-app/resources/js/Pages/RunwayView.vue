@@ -14,22 +14,11 @@ import AppFooter from "@/Components/footer.vue";
 export default {
     name: 'RunwayView',
     components: { navbar, AppFooter },
-    data() {
-        return {
-            searchQuery: '',
-        };
-    },
-    methods: {
-        clearSearch() {
-            this.searchQuery = '';
-        },
-    },
 };
 </script>
 
 <style scoped>
 h1 {
-    background-color: transparent;
     text-align: center;
     color: black;
     font-size: 45px;

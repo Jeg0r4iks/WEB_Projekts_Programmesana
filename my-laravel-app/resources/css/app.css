@@ -14,6 +14,14 @@
     url('../fonts/Akira Expanded Demo.otf') format('woff');
 }
 
+:root {
+    --post-bg: white;
+    --post-border: white;
+    --post-text: black;
+    --input-bg: whitesmoke;
+    --input-border: lightgrey;
+}
+
 body {
     background-color: rgb(241, 211, 211);
     color: black;
@@ -22,6 +30,11 @@ body {
 body.dark {
     background-color: #222;
     color: white;
+    --post-bg: #333;
+    --post-border: #444;
+    --post-text: #eee;
+    --input-bg: #2a2a2a;
+    --input-border: #555;
 }
 
 body.dark h1,

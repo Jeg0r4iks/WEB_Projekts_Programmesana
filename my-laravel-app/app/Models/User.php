@@ -19,7 +19,6 @@ class User extends Authenticatable
         'profile_photo',
     ];
 
-    // вот это — чтобы profile_photo_url попал в JSON
     protected $appends = [
         'profile_photo_url',
     ];
@@ -33,8 +32,6 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
-
-    // возвращает полный URL к картинке профиля
     public function getProfilePhotoUrlAttribute()
     {
         return $this->profile_photo
