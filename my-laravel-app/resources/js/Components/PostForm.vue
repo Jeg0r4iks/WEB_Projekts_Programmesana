@@ -86,14 +86,15 @@
                         </div>
                         <div class="post-buttons">
                             <button
-                                v-if="(post.user && post.user.id === currentUserId) || isAdmin"
+                                v-if="(post.user && post.user.id === currentUserId) || (isAdmin && !post.user.is_admin)"
                                 @click="deletePost(post.id)"
                                 class="btn-delete"
                             >
                                 Delete
                             </button>
+
                             <button
-                                v-if="isAdmin || (post.user && post.user.id === currentUserId)"
+                                v-if="(post.user && post.user.id === currentUserId) || (isAdmin && !post.user.is_admin)"
                                 @click="startEdit(post)"
                                 class="btn-edit"
                             >
@@ -185,11 +186,7 @@
                     </div>
                     <h3>{{ selectedPost.title }}</h3>
                     <div class="post-full-image-wrapper" v-if="selectedPost.image_url">
-                        <img
-                            :src="selectedPost.image_url"
-                            alt="Post Image"
-                            class="post-full-image"
-                        />
+                        <img :src="selectedPost.image_url" alt="Post Image" class="post-full-image" />
                     </div>
                     <p class="post-full-content" v-html="selectedPost.content"></p>
                 </div>
@@ -205,6 +202,14 @@
                                 <strong>{{ cm.user.username }}</strong>
                                 <span class="comment-date">{{ cm.created_date }}</span>
                             </div>
+                            <div
+                                v-if="isLoggedIn && (
+                                    currentUserId === cm.user.id ||
+                                    (isAdmin && !cm.user.is_admin)
+                                )"
+                                class="comments-delete">
+                                <span @click="deleteComment(cm.id, selectedPost.id)" class="delete">x</span>
+                            </div>
                             <p class="comment-content">{{ cm.content }}</p>
                             <hr />
                         </div>
@@ -213,10 +218,10 @@
                         <p>No comments yet</p>
                     </div>
                     <div class="add-comment" v-if="isLoggedIn">
-            <textarea
-                v-model="newCommentContent"
-                placeholder="Add a comment"
-            ></textarea>
+                    <textarea
+                        v-model="newCommentContent"
+                        placeholder="Add a comment"
+                    ></textarea>
                         <button @click="addComment(selectedPost.id)">Send</button>
                     </div>
                     <p v-else class="login-note">Log in to add a comment</p>
@@ -331,7 +336,7 @@ export default {
             const fd = new FormData();
             fd.append("title", this.post.title);
             fd.append("content", this.post.content);
-            this.post.category_ids.forEach((id) => fd.append("category_ids[]", id));
+            this.post.category_ids.forEach(id => fd.append("category_ids[]", id));
             if (this.imageFile) fd.append("image", this.imageFile);
             const res = await axios.post("/posts", fd, {
                 headers: { "Content-Type": "multipart/form-data" }
@@ -350,41 +355,25 @@ export default {
                 let url = "/posts";
                 const params = [];
                 if (this.selectedCategories.length) {
-                    this.selectedCategories.forEach((id) =>
-                        params.push(`category_ids[]=${id}`)
-                    );
+                    this.selectedCategories.forEach(id => params.push(`category_ids[]=${id}`));
                 }
-                if (this.sortBy === "date") params.push("sort=date");
+                if (this.sortBy === "date") params.push(`sort=date`);
                 if (params.length) url += "?" + params.join("&");
                 const response = await axios.get(url);
                 let fetched = response.data;
-                // fetch reactions for each post
                 for (let post of fetched) {
-                    const reactionRes = await axios.get(
-                        `/posts/${post.id}/reactions`
-                    );
-                    post.reactionCounts = reactionRes.data || {
-                        like: 0,
-                        dislike: 0,
-                        heart: 0
-                    };
+                    const reactionRes = await axios.get(`/posts/${post.id}/reactions`);
+                    post.reactionCounts = reactionRes.data || { like: 0, dislike: 0, heart: 0 };
                 }
                 if (this.sortBy === "reactions") {
                     fetched.sort((a, b) => {
-                        const sum = (p) =>
-                            (p.reactionCounts.like || 0) +
-                            (p.reactionCounts.dislike || 0) +
-                            (p.reactionCounts.heart || 0);
+                        const sum = p => (p.reactionCounts.like || 0) + (p.reactionCounts.dislike || 0) + (p.reactionCounts.heart || 0);
                         return sum(b) - sum(a);
                     });
                 }
                 if (this.searchActive && this.searchQuery.trim()) {
                     const q = this.searchQuery.trim().toLowerCase();
-                    fetched = fetched.filter(
-                        (p) =>
-                            p.title.toLowerCase().includes(q) ||
-                            p.content.toLowerCase().includes(q)
-                    );
+                    fetched = fetched.filter(p => p.title.toLowerCase().includes(q) || p.content.toLowerCase().includes(q));
                 }
                 this.posts = fetched;
             } catch (e) {
@@ -428,12 +417,19 @@ export default {
         async addComment(postId) {
             if (!this.newCommentContent) return;
             try {
-                await axios.post(`/posts/${postId}/comments`, {
-                    content: this.newCommentContent
-                });
+                await axios.post(`/posts/${postId}/comments`, { content: this.newCommentContent });
                 this.newCommentContent = "";
                 this.fetchComments(postId);
             } catch {}
+        },
+        async deleteComment(commentId, postId) {
+            try {
+                await axios.delete(`/comments/${commentId}`);
+                await this.fetchComments(postId);
+            } catch (e) {
+                console.error("Failed to delete comment:", e);
+                alert("Error deleting comment.");
+            }
         },
         async addReaction(type, postId) {
             if (!this.isLoggedIn) {
@@ -459,7 +455,7 @@ export default {
                 id: post.id,
                 title: post.title,
                 content: post.content,
-                category_ids: post.categories.map((c) => c.id),
+                category_ids: post.categories.map(c => c.id),
                 imagePreviewUrl: post.image_url || null
             };
             this.imageFile = null;
@@ -473,22 +469,23 @@ export default {
                 const fd = new FormData();
                 fd.append("title", this.editingPost.title);
                 fd.append("content", this.editingPost.content);
-                this.editingPost.category_ids.forEach((id) =>
-                    fd.append("category_ids[]", id)
-                );
+                this.editingPost.category_ids.forEach(id => fd.append("category_ids[]", id));
                 if (this.imageFile) fd.append("image", this.imageFile);
+                // override method for multipart PUT
+                fd.append("_method", "PUT");
+
                 await axios.post(
-                    `/posts/${this.editingPost.id}?_method=PUT`,
+                    `/posts/${this.editingPost.id}`,
                     fd,
-                    {
-                        headers: { "Content-Type": "multipart/form-data" }
-                    }
+                    { headers: { "Content-Type": "multipart/form-data" } }
                 );
+
                 this.cancelEdit();
                 this.resetSearch();
                 await this.fetchPosts();
             } catch (e) {
-                console.error(e);
+                console.error("Update failed:", e.response || e);
+                alert("Sorry, something went wrong while saving your changes.");
             }
         },
         searchPosts() {
@@ -505,9 +502,7 @@ export default {
 
         if (this.filterCategoryName) {
             const name = this.filterCategoryName.toLowerCase();
-            const match = this.categories.find(
-                (c) => c.name.toLowerCase() === name
-            );
+            const match = this.categories.find(c => c.name.toLowerCase() === name);
             if (match) {
                 this.selectedCategories = [match.id];
             }
@@ -1133,4 +1128,22 @@ export default {
     margin-bottom: 12px;
     font-family: "Perfectly Vintages";
 }
+
+.comments-delete {
+    text-align: right;
+    margin-top: -10px;
+    margin-bottom: 10px;
+}
+
+.delete {
+    cursor: pointer;
+    font-size: 18px;
+    color: grey;
+    transition: color 0.2s ease;
+}
+
+.delete:hover {
+    color: grey
+}
+
 </style>

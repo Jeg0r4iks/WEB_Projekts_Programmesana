@@ -6,6 +6,13 @@
   <component name="ChangeListManager">
     <list default="true" id="d52ee4fa-bf82-4f27-a061-9d7b8f5e195d" name="Changes" comment="Working on darkmode">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/my-laravel-app/app/Http/Controllers/CommentController.php" beforeDir="false" afterPath="$PROJECT_DIR$/my-laravel-app/app/Http/Controllers/CommentController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/my-laravel-app/app/Http/Controllers/PostController.php" beforeDir="false" afterPath="$PROJECT_DIR$/my-laravel-app/app/Http/Controllers/PostController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/my-laravel-app/app/Http/Controllers/RegisterController.php" beforeDir="false" afterPath="$PROJECT_DIR$/my-laravel-app/app/Http/Controllers/RegisterController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/my-laravel-app/resources/js/Components/PostForm.vue" beforeDir="false" afterPath="$PROJECT_DIR$/my-laravel-app/resources/js/Components/PostForm.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/my-laravel-app/resources/js/Pages/LoginView.vue" beforeDir="false" afterPath="$PROJECT_DIR$/my-laravel-app/resources/js/Pages/LoginView.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/my-laravel-app/resources/js/Pages/ProfileView.vue" beforeDir="false" afterPath="$PROJECT_DIR$/my-laravel-app/resources/js/Pages/ProfileView.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/my-laravel-app/routes/web.php" beforeDir="false" afterPath="$PROJECT_DIR$/my-laravel-app/routes/web.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -225,7 +232,11 @@
       <workItem from="1749104467663" duration="1251000" />
       <workItem from="1749132145792" duration="2165000" />
       <workItem from="1749213158703" duration="14437000" />
-      <workItem from="1749403441982" duration="11270000" />
+      <workItem from="1749403441982" duration="11291000" />
+      <workItem from="1749447011948" duration="5024000" />
+      <workItem from="1749465663532" duration="1708000" />
+      <workItem from="1749469182765" duration="117000" />
+      <workItem from="1749629113662" duration="7568000" />
     </task>
     <task id="LOCAL-00001" summary="Database migrations, posts are connected with users, registration and login cookies added.">
       <option name="closed" value="true" />
@@ -307,7 +318,15 @@
       <option name="project" value="LOCAL" />
       <updated>1749414753729</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="Working on darkmode">
+      <option name="closed" value="true" />
+      <created>1749414925836</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1749414925836</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

@@ -73,3 +73,28 @@ Route::middleware('auth:sanctum')->group(function () {
         ]);
     });
 });
+Route::middleware('auth:sanctum')->group(function () {
+    Route::delete('/comments/{id}', [CommentController::class, 'destroy']);
+    Route::delete('/posts/{id}', [PostController::class, 'destroy']);
+});
+
+Route::middleware(['auth:sanctum'])->get('/users', function () {
+    return \App\Models\User::select('id', 'username', 'email', 'is_admin')->get();
+});
+
+Route::middleware(['auth:sanctum'])->delete('/users/{id}', function (int $id, Request $request) {
+    $admin = $request->user();
+    if (!$admin->is_admin) {
+        return response()->json(['error' => 'Forbidden'], 403);
+    }
+
+    $user = \App\Models\User::findOrFail($id);
+
+    if ($user->is_admin) {
+        return response()->json(['error' => 'Cannot delete another admin'], 403);
+    }
+
+    $user->delete();
+    return response()->json(['message' => 'User deleted']);
+});
+

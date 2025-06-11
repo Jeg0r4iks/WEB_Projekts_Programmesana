@@ -52,6 +52,7 @@ import { ref, computed } from 'vue';
 import axios from 'axios';
 import { router } from '@inertiajs/vue3';
 
+// Regex pārbaudes priekš reģistrācijas
 const usernameRegex = /^[A-Za-z0-9_]{7,}$/;
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const passwordRegex = /^(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?])(?=.*\d).{8,}$/;
@@ -76,6 +77,7 @@ const toggleMode = () => {
     confirmPassword.value = '';
 };
 
+// Validācija, paziņojumi par nepareizo formātu
 const usernameError = computed(() => {
     if (isLogin.value) return '';
     if (!username.value) return 'Username is required';

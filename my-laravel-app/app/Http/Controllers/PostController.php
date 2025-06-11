@@ -10,6 +10,7 @@ class PostController extends Controller
 {
     public function index(Request $request)
     {
+        // Lietotājs, kategorijas, reakcijas tabulu apvienošana
         $query = Post::with(['user','categories','reactions']);
 
         if ($request->filled('user_id')) {
@@ -19,6 +20,7 @@ class PostController extends Controller
         $ids = $request->input('category_ids', []);
         $totalCategories = \App\Models\Category::count();
         if (is_array($ids) && count($ids) > 0 && count($ids) < $totalCategories) {
+            // Kategoriju filtrēšana
             foreach ($ids as $catId) {
                 $query->whereHas('categories', fn($q) =>
                 $q->where('categories.id', $catId)
@@ -38,6 +40,7 @@ class PostController extends Controller
         return response()->json($posts);
     }
 
+    // Publikācijas saņemšana no datubāzes
     public function show(Post $post)
     {
         $post->load(['user','categories','reactions']);
@@ -66,6 +69,7 @@ class PostController extends Controller
             'image'   => $path,
         ]);
 
+        // Kategoriju pievienošana vai atjaunošana
         $post->categories()->sync($data['category_ids']);
         $post->load(['user','categories','reactions']);
         $post->image = $post->image_url;
@@ -116,18 +120,24 @@ class PostController extends Controller
         ]);
     }
 
-    public function destroy(Post $post)
+    public function destroy($id)
     {
-        if (auth()->id() !== $post->user_id && ! auth()->user()->is_admin) {
-            return response()->json(['error'=>'Unauthorized'],403);
+        $post = \App\Models\Post::with('user')->findOrFail($id);
+        $authUser = auth()->user();
+
+        // Владелец поста может удалить его
+        if ($authUser->id === $post->user_id) {
+            $post->delete();
+            return response()->json(['message' => 'Post deleted']);
         }
 
-        if ($post->image) {
-            Storage::disk('public')->delete($post->image);
+        // Админ может удалить посты обычных пользователей
+        if ($authUser->is_admin && !$post->user->is_admin) {
+            $post->delete();
+            return response()->json(['message' => 'Post deleted by admin']);
         }
 
-        $post->delete();
-
-        return response()->json(['message'=>'Post deleted successfully']);
+        return response()->json(['message' => 'Unauthorized'], 403);
     }
+
 }

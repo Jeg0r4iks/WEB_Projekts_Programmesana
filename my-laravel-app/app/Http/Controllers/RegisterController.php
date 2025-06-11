@@ -22,7 +22,7 @@ class RegisterController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        auth()->login($user); // для сессии Sanctum
+        auth()->login($user);
 
         return response()->json([
             'message' => 'Registration successful',
@@ -30,3 +30,4 @@ class RegisterController extends Controller
         ]);
     }
 }
+

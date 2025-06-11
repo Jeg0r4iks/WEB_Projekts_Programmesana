@@ -73,6 +73,29 @@
                 {{ message }}
             </div>
         </transition>
+
+        <button v-if="isAdmin" @click="toggleUserPanel" class="admin-toggle">
+            {{ showUsers ? 'Hide Users' : 'Show Users' }}
+        </button>
+
+        <transition name="fade">
+            <div v-if="showUsers" class="admin-panel-box">
+                <h2>Manage Users</h2>
+                <ul>
+                    <li v-for="u in users" :key="u.id">
+                        <span>{{ u.username }} ({{ u.email }})</span>
+                        <span v-if="u.is_admin"> - admin</span>
+                        <button
+                            v-if="u.id !== user.id && !u.is_admin"
+                            @click="deleteUser(u.id)"
+                            class="btn-delete"
+                        >
+                            Delete
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </transition>
     </div>
 </template>
 
@@ -93,6 +116,11 @@ const message = ref('');
 const visible = ref(false);
 const postCount = ref(0);
 const totalLikes = ref(0);
+
+const users = ref([]);
+const isAdmin = ref(false);
+const currentUserId = ref(null);
+const showUsers = ref(false);
 
 const usernameError = computed(() => {
     if (!isEditing.value) return '';
@@ -208,15 +236,51 @@ async function saveProfile() {
     }
 }
 
+async function fetchUsers() {
+    try {
+        const { data } = await axios.get('/users');
+        users.value = data;
+    } catch (e) {
+        console.error("Failed to fetch users", e);
+    }
+}
+
+async function checkAdminStatus() {
+    try {
+        const { data } = await axios.get('/user');
+        isAdmin.value = !!data.is_admin;
+        currentUserId.value = data.id;
+        if (isAdmin.value) {
+            await fetchUsers();
+        }
+    } catch {}
+}
+
+function toggleUserPanel() {
+    showUsers.value = !showUsers.value;
+}
+
+async function deleteUser(id) {
+    if (!confirm("Delete this user?")) return;
+    try {
+        await axios.delete(`/users/${id}`);
+        await fetchUsers();
+    } catch (e) {
+        console.error("Failed to delete user:", e);
+    }
+}
+
 const logout = async () => {
     await axios.post('/logout');
     router.visit('/login');
 };
+
 const goHome = () => router.visit('/');
 
 onMounted(async () => {
     await fetchUser();
     await fetchStats();
+    await checkAdminStatus();
 });
 </script>
 
@@ -257,8 +321,6 @@ onMounted(async () => {
     border-radius: 50%;
     background-color: var(--post-bg);
     border: 1px solid var(--post-border);
-    transition: background-color 0.3s ease,
-    border-color 0.3s ease;
 }
 
 .profile-info {
@@ -288,10 +350,6 @@ button {
     cursor: pointer;
     font-family: 'Perfectly Vintages';
     font-size: 20px;
-    transition: background-color 0.3s ease,
-    border-color 0.3s ease,
-    color 0.3s ease,
-    filter 0.2s ease;
 }
 
 button:hover {
@@ -311,9 +369,6 @@ button:hover {
     color: var(--post-text);
     border: 1px solid var(--input-border);
     border-radius: 4px;
-    transition: background-color 0.3s ease,
-    border-color 0.3s ease,
-    color 0.3s ease;
 }
 
 .edit-form {
@@ -325,9 +380,6 @@ button:hover {
     text-align: left;
     color: var(--post-text);
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    transition: background-color 0.3s ease,
-    border-color 0.3s ease,
-    color 0.3s ease;
 }
 
 .edit-form h2 {
@@ -356,9 +408,6 @@ button:hover {
     color: var(--post-text);
     border: 1px solid var(--input-border);
     border-radius: 4px;
-    transition: background-color 0.3s ease,
-    border-color 0.3s ease,
-    color 0.3s ease;
 }
 
 .preview-img {
@@ -369,14 +418,62 @@ button:hover {
     margin-top: 5px;
     border: 1px solid var(--post-border);
     background-color: var(--post-bg);
-    transition: background-color 0.3s ease,
-    border-color 0.3s ease;
 }
 
-.edit-form button {
-    width: auto;
-    margin: 10px 10px 0 0;
-    padding: 10px 20px;
+.admin-toggle {
+    width: 40%;
+    margin: 30px auto 20px;
+    padding: 12px;
+    background-color: var(--input-bg);
+    color: var(--post-text);
+    border: 1px solid var(--input-border);
+    border-radius: 5px;
+    cursor: pointer;
+    font-family: 'Perfectly Vintages';
+    font-size: 20px;
+    display: block;
 }
 
+.admin-panel-box {
+    max-width: 600px;
+    margin: 30px auto;
+    padding: 20px;
+    background-color: var(--post-bg);
+    border: 1px solid var(--post-border);
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    color: var(--post-text);
+    font-size: 18px;
+    text-align: left;
+}
+
+.admin-panel-box h2 {
+    font-family: "Perfectly Vintages";
+    font-size: 28px;
+    margin-bottom: 15px;
+}
+
+.admin-panel-box ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.admin-panel-box li {
+    margin-bottom: 10px;
+}
+
+.btn-delete {
+    margin-left: 10px;
+    padding: 6px 12px;
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.btn-delete:hover {
+    background-color: #c0392b;
+}
 </style>

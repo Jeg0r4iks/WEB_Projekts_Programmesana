@@ -35,4 +35,22 @@ class CommentController extends Controller
         return response()->json($comment, 201);
     }
 
+    public function destroy($id)
+    {
+        $comment = \App\Models\Comment::with('user')->findOrFail($id);
+        $authUser = auth()->user();
+
+        if ($authUser->id === $comment->user_id) {
+            $comment->delete();
+            return response()->json(['message' => 'Comment deleted']);
+        }
+
+        if ($authUser->is_admin && !$comment->user->is_admin) {
+            $comment->delete();
+            return response()->json(['message' => 'Comment deleted by admin']);
+        }
+
+        return response()->json(['message' => 'You cannot delete this comment'], 403);
+    }
+
 }
